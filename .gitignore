@@ -1,0 +1,8 @@
+# 忽略所有 node_modules
+**/node_modules/
+
+# 忽略所有 dist 資料夾
+**/dist/
+
+# 忽略所有 .env
+**/.env

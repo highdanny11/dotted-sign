@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "lib": ["es5", "es6"],
+    /* 语言和环境 */
+    "target": "es2016",                                  /* 设置输出的 JavaScript 语言版本，并包含兼容的库声明。 */
+    /* 模塊 */
+    "module": "commonjs",                                /* 指定生成的模塊代碼。 */
+    "outDir": "dist",                                   /* Specify an output folder for all emitted files. */
+    "baseUrl": "./",                                     /* Base directory to resolve non-absolute module names. */
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
+    "moduleResolution": "node",
+    "experimentalDecorators": true,                      /* 沒有加上這個無法使用修飾子*/
+    "emitDecoratorMetadata": true,
+    "sourceMap": true,
+
+    /* Type Checking */
+    "strict": true,                                      /* Enable all strict type-checking options. */
+    "skipLibCheck": true,                                /* Skip type checking all .d.ts files. */
+    "strictPropertyInitialization": false                /* 避免設定資料表欄位被說有 undefined 可能 https://github.com/typeorm/typeorm/issues/2797*/
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

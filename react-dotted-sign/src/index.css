@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Noto+Serif+TC:wght@200..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Noto Sans TC", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+@utility container {
+  margin-inline: auto;
+  padding-inline: 24px;
+  @variant md {
+    padding-inline: 36px;
+  }
+  @variant xl {
+    padding-inline: 72px;
+  }
+}
+@theme static {
+  --color-primary: rgba(206, 229, 228, 1);
+  --color-brand: rgba(11, 125, 119, 1);
+  --color-brand-hover: rgba(9, 101, 97, 1);
+  --color-dark: rgba(50, 51, 56, 1);
+  --color-dark-grey: rgba(103, 104, 121, 1);
+  --color-grey: rgba(197, 199, 208, 1);
+  --color-ui-grey: rgba(230, 233, 239, 1);
+  --color-light-grey: rgba(245, 246, 248, 1);
+  --color-negative: rgba(216, 58, 82, 1);
+  --color-positive: rgba(11, 134, 82, 1);
+  --color-general: rgba(0, 115, 234, 1);
+  --color-black: rgba(50, 51, 56, 1);
+  --text-2xl: 2rem;
+  --text-xl: 1.5rem;
+  --text-lg: 1.125rem;
+  --text-base: 1rem;
+  --text-sm: .875rem;
+  --text-sx: .75rem;
+}
+@layer components {
+  .h2 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-bold);
+  }
+  .h4 {
+    font-size: var(--text-base);
+  }
+  .h5 {
+    font-size: var(--text-sm);
+  }
+}
+body {
+  color: var(--color-black);
+}
+button {
+  @apply cursor-pointer;
+}
+.custom-modal.ant-modal .ant-modal-content {
+  padding: 20px 0;
+}
