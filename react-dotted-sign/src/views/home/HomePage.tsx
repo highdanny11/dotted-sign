@@ -4,18 +4,37 @@ import Step1 from '@/assets/Step1.svg';
 import Step2 from '@/assets/Step2.svg';
 import Step3 from '@/assets/Step3.svg';
 import { useDrag } from '@/hook/useDrag';
+import { useNavigate } from 'react-router';
+import { useLayoutStore } from '@/store/useLayout';
+import { useSignStore } from '@/store/useSign';
 
 export function HomePage() {
-  const [files, setFiles] = useState<File[]>([]);
+  const setHeader = useLayoutStore((state) => state.setHeader);
+  const setFile = useSignStore((state) => state.setFile);
+  const setFileName = useSignStore((state) => state.setFileName);
+  const navigate = useNavigate();
+
+  const finishFile = (file: File) => {
+    setFileName(file.name);
+    setFile(file);
+    navigate('/sign');
+    setHeader('SignHeader');
+  };
+
   const { dragDom } = useDrag<HTMLLabelElement>({
     dragIntoDomEvent: (e: DragEvent) => {
       const filesList = [...e.dataTransfer!.files];
-      setFiles((prevFiles) => [...prevFiles, ...filesList]);
+      const file = filesList[0];
+      finishFile(file);
     },
   });
-  useEffect(() => {
-    console.log('files (useEffect):', files);
-  }, [files]);
+  const uploadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const filesList = [...e.target.files];
+      const file = filesList[0];
+      finishFile(file);
+    }
+  };
 
   return (
     <div className="container">
@@ -34,8 +53,16 @@ export function HomePage() {
         <p className="h5 text-brand-hover text-center font-bold">
           檔案大小10MB以內，檔案格式為PDF、JPG 或 PNG
         </p>
-        <label htmlFor="file" className="absolute inset-0" ref={dragDom}>
-          <input type="file" id="file" className="hidden" />
+        <label
+          htmlFor="file"
+          className="absolute inset-0 cursor-pointer"
+          ref={dragDom}>
+          <input
+            type="file"
+            id="file"
+            className="hidden"
+            onChange={uploadFile}
+          />
         </label>
       </div>
       <div className="mt-10">

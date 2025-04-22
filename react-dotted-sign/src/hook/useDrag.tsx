@@ -3,7 +3,6 @@ export function useDrag<T extends HTMLElement>({
 }: {
   dragIntoDomEvent: (e: DragEvent) => void;
 }) {
-  console.log('useDrag');
   const dragDom = useRef<T>(null);
   const [isDragging, setDrag] = useState(false);
 

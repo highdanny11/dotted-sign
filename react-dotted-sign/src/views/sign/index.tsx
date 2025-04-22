@@ -5,8 +5,8 @@ import { UploadFile } from './UploadFile';
 import { Input } from '@/component/form/Input';
 import { Button } from '@/component/form/Button';
 import { SignSettingSection } from './SignSettingSection';
-import type { TabsProps } from 'antd';
-import { Modal } from 'antd';
+import { useSignStore } from '@/store/useSign';
+
 import {
   MdDragIndicator,
   MdDeleteOutline,
@@ -16,7 +16,9 @@ import {
 } from 'react-icons/md';
 
 export function Sign() {
+  const file = useSignStore((state) => state.file);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <>
       <Step />
