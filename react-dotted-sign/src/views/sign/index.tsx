@@ -18,31 +18,35 @@ import {
   MdMenuOpen,
   MdClose,
 } from 'react-icons/md';
+import { PDFBox } from './PDFBox';
 
 export function Sign() {
-  const [pdf, setPdf] = useState<string[]>([]);
   const file = useSignStore((state) => state.file);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cavasPdf, setCavasPdf] = useState<HTMLCanvasElement[]>([]);
-  
+
   useEffect(() => {
     const handleFileChange = async (file: File) => {
       const base64String = await fileToBase64(file);
       const canvasList = await PDFUtils(base64String);
+      setCavasPdf(canvasList);
     };
 
     if (file) {
       handleFileChange(file);
     }
-  }, [file])
+  }, [file]);
 
   return (
     <>
       <Step />
       <div className="border-grey overflow-hidden border-t">
         <div className="relative lg:container lg:flex">
-          <main className="max-h-[calc(100vh-240px)] overflow-auto p-6 lg:max-h-[calc(100vh-135px)] lg:flex-grow-1 xl:px-12 bg-ui-grey">
-            <div className="bg-grey h-[1200px]"></div>
+          <main className="bg-ui-grey h-[calc(100vh-240px)] overflow-auto p-6 lg:h-[calc(100vh-135px)] lg:flex-grow-1 xl:px-12">
+            {cavasPdf.map((canvas, index) => (
+              <PDFBox key={index} pdfCanvas={canvas} />
+            ))}
+            {/* <div className="bg-grey h-[1200px]"></div> */}
             <div className="absolute bottom-[120px] left-12 lg:bottom-10 lg:left-[9%]">
               <ul className="flex items-center gap-2">
                 <li>
