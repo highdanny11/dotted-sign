@@ -6,7 +6,11 @@ import { Input } from '@/component/form/Input';
 import { Button } from '@/component/form/Button';
 import { SignSettingSection } from './SignSettingSection';
 import { useSignStore } from '@/store/useSign';
-
+import { fileToBase64 } from '@/utils/fileToBase64';
+import { PDFUtils } from '@/utils/PDFUtils';
+import { fabric } from 'fabric';
+// https://github.com/ChangChiao/f2e-2022-sign/blob/main/src/components/PDFItem.tsx
+// https://eminent-temple-cd0.notion.site/PDF-da0347f450af4f67975e2c2d699c6c3e
 import {
   MdDragIndicator,
   MdDeleteOutline,
@@ -16,15 +20,28 @@ import {
 } from 'react-icons/md';
 
 export function Sign() {
+  const [pdf, setPdf] = useState<string[]>([]);
   const file = useSignStore((state) => state.file);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cavasPdf, setCavasPdf] = useState<HTMLCanvasElement[]>([]);
+  
+  useEffect(() => {
+    const handleFileChange = async (file: File) => {
+      const base64String = await fileToBase64(file);
+      const canvasList = await PDFUtils(base64String);
+    };
+
+    if (file) {
+      handleFileChange(file);
+    }
+  }, [file])
 
   return (
     <>
       <Step />
       <div className="border-grey overflow-hidden border-t">
         <div className="relative lg:container lg:flex">
-          <main className="max-h-[calc(100vh-240px)] overflow-auto p-6 lg:max-h-[calc(100vh-135px)] lg:flex-grow-1 xl:px-12">
+          <main className="max-h-[calc(100vh-240px)] overflow-auto p-6 lg:max-h-[calc(100vh-135px)] lg:flex-grow-1 xl:px-12 bg-ui-grey">
             <div className="bg-grey h-[1200px]"></div>
             <div className="absolute bottom-[120px] left-12 lg:bottom-10 lg:left-[9%]">
               <ul className="flex items-center gap-2">
