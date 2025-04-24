@@ -1,10 +1,20 @@
 import { fabric } from 'fabric';
+import { Canvas } from 'fabric/fabric-impl';
+import { useSignStore } from '@/store/useSign';
 
-export function PDFBox({ pdfCanvas }: { pdfCanvas: HTMLCanvasElement }) {
+interface PDFBoxProps {
+  pdfCanvas: HTMLCanvasElement;
+  index: number;
+  currentPage: number;
+}
+
+export function PDFBox(
+  { pdfCanvas, index, currentPage }: PDFBoxProps) {
   const pdfWrap = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const canvas = new fabric.Canvas('render-PDF');
-  canvas.requestRenderAll();
+  const canvasRef = useRef<Canvas | null>(null);
+  const signature = useSignStore((state) => state.signature);
+  
+  
 
   async function pdfToImage(pdfData: HTMLCanvasElement) {
     const data = pdfData as unknown as HTMLImageElement;
@@ -23,24 +33,33 @@ export function PDFBox({ pdfCanvas }: { pdfCanvas: HTMLCanvasElement }) {
 
   useEffect(() => {
     async function renderPDF() {
+      if (index !== currentPage ) return;
+      if (!canvasRef.current) {
+        canvasRef.current = new fabric.Canvas(`PDF-${index}`);
+      }
+      canvasRef.current.requestRenderAll();
       const img = await pdfToImage(pdfCanvas);
-      canvas.setWidth(img.width! * img.scaleX!);
-      canvas.setHeight(img.height! * img.scaleY!);
-      canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-      const text = new fabric.Textbox('請簽名', {
-        top: 400,
-        fill: 'back',
-        fontFamily: 'Noto Sans TC',
-      });
-      canvas.add(text);
+      canvasRef.current.setWidth(img.width! * img.scaleX!);
+      canvasRef.current.setHeight(img.height! * img.scaleY!);
+      canvasRef.current.setBackgroundImage(img, canvasRef.current.renderAll.bind(canvasRef.current));
     }
+    renderPDF();    
+  }, [pdfCanvas, currentPage]);
 
-    renderPDF();
-  }, [pdfCanvas]);
+  useEffect(() => {
+    canvasRef.current?.renderAll(); 
+    if (signature[index]?.length === 0) return;
+    signature[index]?.forEach((item) => {
+      if (canvasRef.current) {
+        canvasRef.current.add(item);
+        canvasRef.current.renderAll();
+      }
+    });
+  }, [signature])
   return (
     <>
-      <div ref={pdfWrap} className="flex w-full justify-center">
-        <canvas id="render-PDF" ref={canvasRef}></canvas>
+      <div ref={pdfWrap} className={`w-full justify-center relative ${index === currentPage ? 'flex' : 'hidden'}`}>
+        <canvas id={`PDF-${index}`} ></canvas>
       </div>
     </>
   );

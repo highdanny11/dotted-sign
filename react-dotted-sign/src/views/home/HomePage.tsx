@@ -51,7 +51,7 @@ export function HomePage() {
           選擇檔案
         </button>
         <p className="h5 text-brand-hover text-center font-bold">
-          檔案大小10MB以內，檔案格式為PDF、JPG 或 PNG
+          檔案大小10MB以內，檔案格式為PDF
         </p>
         <label
           htmlFor="file"
