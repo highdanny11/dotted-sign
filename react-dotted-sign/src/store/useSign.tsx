@@ -53,7 +53,7 @@ const fakeSign = () => {
     fill: 'back',
     fontFamily: 'Noto Sans TC',
   });
-  text.controls.deleteControl =  new fabric.Control({
+  fabric.Textbox.prototype.controls.deleteControl  =  new fabric.Control({
     x: 0.5,
     y: -0.5,
     offsetY: 16,

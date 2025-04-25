@@ -14,7 +14,7 @@ export function SignSettingSection() {
   const [key, setKey] = useState<TabKey>('InputSign');
   const components = {
     InputSign: <InputSign />,
-    SignaturePad: <SignaturePad />,
+    SignaturePad: <SignaturePad key={key} />,
     UploadFile: <UploadFile />,
   }
   const showModal = () => {
