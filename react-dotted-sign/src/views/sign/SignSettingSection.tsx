@@ -4,19 +4,55 @@ import { Modal } from 'antd';
 import { InputSign } from './InputSign';
 import { SignaturePad } from './SignaturePad';
 import { UploadFile } from './UploadFile';
-import {
-  MdDragIndicator,
-} from 'react-icons/md';
+import { useSignStore } from '@/store/useSign';
+import { MdDragIndicator } from 'react-icons/md';
+import { fabric } from 'fabric';
 
 type TabKey = 'InputSign' | 'SignaturePad' | 'UploadFile';
+
+const renderCloseBtn = (
+  ctx: CanvasRenderingContext2D,
+  left: number,
+  top: number,
+  _styleOverride: any,
+  faricObject: fabric.Object
+) => {
+  const img = document.createElement('img');
+
+  const deleteIcon =
+    "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Ebene_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='595.275px' height='595.275px' viewBox='200 215 230 470' xml:space='preserve'%3E%3Ccircle style='fill:%23F44336;' cx='299.76' cy='439.067' r='218.516'/%3E%3Cg%3E%3Crect x='267.162' y='307.978' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -222.6202 340.6915)' style='fill:white;' width='65.545' height='262.18'/%3E%3Crect x='266.988' y='308.153' transform='matrix(0.7071 0.7071 -0.7071 0.7071 398.3889 -83.3116)' style='fill:white;' width='65.544' height='262.179'/%3E%3C/g%3E%3C/svg%3E";
+
+  img.src = deleteIcon;
+  const size = 30;
+  ctx.save();
+  ctx.translate(left, top);
+  ctx.rotate(fabric.util.degreesToRadians(faricObject.angle!));
+  ctx.drawImage(img, -size / 2, -size / 2, size, size);
+  ctx.restore();
+};
+
 export function SignSettingSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [key, setKey] = useState<TabKey>('InputSign');
-  const components = {
-    InputSign: <InputSign />,
-    SignaturePad: <SignaturePad key={key} />,
-    UploadFile: <UploadFile />,
-  }
+  const canvasList = useSignStore((state) => state.canvasList);
+  const currentSign = useRef('');
+  const setSign = useCallback((sign: string) => {
+    currentSign.current = sign;
+  }, []);
+
+  const deleteObject = (
+    _eventData: MouseEvent,
+    transformData: fabric.Transform
+  ) => {
+    const target = transformData.target;
+    if (target) {
+      target.canvas?.remove(target);
+      target.canvas?.requestRenderAll();
+    }
+
+    return true;
+  };
+
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -39,7 +75,30 @@ export function SignSettingSection() {
     }
   };
 
-  
+  const save = () => {
+    const img = document.createElement('img');
+    img.src = currentSign.current;
+    img.onload = () => {
+      const data = new fabric.Image(img, {
+        top: 400,
+        width: img.width,
+        height: img.height,
+      });
+
+      data.controls.deleteControl = new fabric.Control({
+        x: 0.5,
+        y: -0.5,
+        offsetY: 16,
+        cursorStyle: 'pointer',
+        mouseUpHandler: deleteObject,
+        render: renderCloseBtn,
+      });
+      canvasList[0].add(data);
+      // addSignature(0, data);
+    };
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       <form className="mb-10">
@@ -99,12 +158,15 @@ export function SignSettingSection() {
           <span
             className={`bg-brand absolute bottom-0 left-0 inline-block h-[2px] w-1/3 translate-y-1/2 duration-200 ${changeTab(key)}`}></span>
         </div>
-        {components[key]}
+        {key === 'InputSign' && <InputSign />}
+        {key === 'SignaturePad' && <SignaturePad setCurrentSign={setSign} />}
+        {key === 'UploadFile' && <UploadFile />}
         <div>
           <p className="text-dark-grey mb-2 text-center text-xs">
             我了解這是一個具法律效力的本人簽名
           </p>
           <button
+            onClick={save}
             type="button"
             className="bg-brand mx-auto flex h-[38px] w-[102px] items-center justify-center rounded text-white">
             儲存

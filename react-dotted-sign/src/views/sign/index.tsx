@@ -4,6 +4,7 @@ import { SignSettingSection } from './SignSettingSection';
 import { useSignStore } from '@/store/useSign';
 import { fileToBase64 } from '@/utils/fileToBase64';
 import { PDFUtils } from '@/utils/PDFUtils';
+import { memo } from 'react';
 // https://github.com/ChangChiao/f2e-2022-sign/blob/main/src/components/PDFItem.tsx
 // https://eminent-temple-cd0.notion.site/PDF-da0347f450af4f67975e2c2d699c6c3e
 import {
@@ -41,7 +42,12 @@ export function Sign() {
         <div className="relative lg:container lg:flex">
           <main className="bg-ui-grey h-[calc(100vh-240px)] overflow-auto p-6 lg:h-[calc(100vh-135px)] lg:flex-grow-1 xl:px-12">
             {cavasPdf.map((canvas, index) => (
-              <PDFBox key={index} pdfCanvas={canvas} index={index} currentPage={currentPage} />
+              <PDFBox
+                key={index}
+                pdfCanvas={canvas}
+                index={index}
+                currentPage={currentPage}
+              />
             ))}
             {/* <div className="bg-grey h-[1200px]"></div> */}
             {/* 功能列 */}
@@ -71,7 +77,9 @@ export function Sign() {
                 <li>
                   <button
                     type="button"
-                    onClick={() => setCurrentPage((prev) => (prev > 0 ? prev - 1 : prev + 1))}
+                    onClick={() =>
+                      setCurrentPage((prev) => (prev > 0 ? prev - 1 : prev + 1))
+                    }
                     className="border-grey rounded border bg-white p-1">
                     <MdArrowForwardIos className="text-dark-grey text-xl" />
                   </button>

@@ -1,8 +1,23 @@
-export function SignaturePad() {
+export function SignaturePad({
+  setCurrentSign,
+}: {
+  setCurrentSign: (sign: string) => void;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
-  const storkesRef = useRef<{color: string, points: {x: number, y:number}[]}[]>([]);
-  let currentStroke: {color: string, points: {x: number, y:number}[]} | null = null
+  const storkesRef = useRef<
+    { color: string; points: { x: number; y: number }[] }[]
+  >([]);
+  const canvasOptions = {
+    lineWidth: 4,
+    lineCap: 'round',
+    strokeStyle: '#000000',
+    fillStyle: '#fff',
+  };
+  let currentStroke: {
+    color: string;
+    points: { x: number; y: number }[];
+  } | null = null;
   let isDrawing = false;
 
   const initCanvas = () => {
@@ -10,7 +25,7 @@ export function SignaturePad() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
+
     const ratio = window.devicePixelRatio || 1;
     const { width, height } = canvas.getBoundingClientRect();
 
@@ -22,78 +37,17 @@ export function SignaturePad() {
     ctx.scale(ratio, ratio);
 
     ctxRef.current = ctx;
-    ctx.lineWidth = 2;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = '#000000';
-    ctx.fillStyle = '#fff';
+    Object.assign(ctx, canvasOptions);
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
+  };
 
-  const mouseDown = useCallback((e: React.MouseEvent) => {
-    handleMouseDown(e);
-  }, [])
-  const mouseMove = useCallback((e: React.MouseEvent) => {
-    handleMouseMove(e)
-  }, [])
-  const mouseup = useCallback(() => {
-    handleMouseUp()
-  }, [])
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    console.log('mousedown')
-    e.preventDefault();
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    if (!ctxRef.current) return;
-    isDrawing = true;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    currentStroke = {
-      color: ctxRef.current.strokeStyle as string,
-      points: [{ x, y }],
-    };
-    ctxRef.current.beginPath();
-  }
-  
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const canvasSize = canvas.getBoundingClientRect();
-    if (!ctxRef.current) return;
-    if (!isDrawing) return;
-    ctxRef.current.lineTo(e.clientX - canvasSize.left ,e.clientY - canvasSize.top);
-    currentStroke!.points.push({ x:e.clientX - canvasSize.left, y: e.clientY - canvasSize.top });
-    ctxRef.current.stroke();
-  }
-  const handleMouseUp = () => {
-    isDrawing = false;
-    if (!ctxRef.current) return;
-    currentStroke && storkesRef.current.push(currentStroke);
-    currentStroke = null;
-    ctxRef.current.beginPath();
-  }
-
-  const clearRect = () => {
-    ctxRef.current?.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
-    storkesRef.current = [];
-  }
-  const changeColor = (color: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    const canvas = canvasRef.current;
+  const reDraw = () => {
     const ctx = ctxRef.current;
-    if (!canvas || !ctx ||!ctxRef.current) return;
-    const rect = canvas.getBoundingClientRect();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, rect.width, rect.height);
-
+    if (!ctx) return;
     for (const stroke of storkesRef.current) {
+      stroke.color = canvasOptions.strokeStyle;
       if (stroke.points.length < 2) continue;
       ctx.beginPath();
-      ctx.strokeStyle = color;
       ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
       for (let i = 1; i < stroke.points.length; i++) {
         ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
@@ -101,25 +55,125 @@ export function SignaturePad() {
       ctx.stroke();
       ctx.closePath();
     }
+  };
+
+  const updateSign = () => {
+    const ctx = ctxRef.current;
+    if (!ctx) return;
+    ctx.fillStyle = 'transparent';
+    setCurrentSign(canvasRef.current?.toDataURL() || '');
+    ctx.fillStyle = '#fff';
+  };
+
+  const getClientXY = (e: React.MouseEvent | React.TouchEvent) => {
+    if ('touches' in e && e.touches.length > 0) {
+      return {
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+      };
+    } else if ('clientX' in e) {
+      return {
+        clientX: e.clientX,
+        clientY: e.clientY,
+      };
     }
+    return { clientX: 0, clientY: 0 };
+  };
 
-  useEffect(() => {
-    initCanvas()
-  }, [])
+  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    const canvas = canvasRef.current;
+    const ctx = ctxRef.current;
+    if (!canvas || !ctx) return;
+    isDrawing = true;
+    const rect = canvas.getBoundingClientRect();
+    const { clientX, clientY } = getClientXY(e);
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    currentStroke = {
+      color: ctx.strokeStyle as string,
+      points: [{ x, y }],
+    };
+    ctx.beginPath();
+  };
 
-  useEffect(() => {
-    clearRect()
-  })
+  const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
+    const canvas = canvasRef.current;
+    const ctx = ctxRef.current;
+    if (!canvas || !ctx) return;
+    if (!isDrawing) return;
+    const canvasSize = canvas.getBoundingClientRect();
+    const { clientX, clientY } = getClientXY(e);
+    ctx.lineTo(clientX - canvasSize.left, clientY - canvasSize.top);
+    currentStroke!.points.push({
+      x: clientX - canvasSize.left,
+      y: clientY - canvasSize.top,
+    });
+    ctx.stroke();
+  };
 
-  
+  const handleMouseUp = () => {
+    isDrawing = false;
+    if (!ctxRef.current) return;
+    currentStroke && storkesRef.current.push(currentStroke);
+    currentStroke = null;
+    ctxRef.current.fillStyle = 'transparent';
+    setCurrentSign(canvasRef.current?.toDataURL() || '');
+  };
+
+  const mouseDown = useCallback(handleMouseDown, []);
+  const mouseMove = useCallback(handleMouseMove, []);
+  const mouseup = useCallback(handleMouseUp, []);
+
+  const clear = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    if (!canvasRef.current || !ctxRef.current) return;
+    const { width, height } = canvasRef.current;
+    ctxRef.current.clearRect(0, 0, width, height);
+    storkesRef.current = [];
+  };
+
+  const changeColor = (color: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    const canvas = canvasRef.current;
+    const ctx = ctxRef.current;
+    if (!canvas || !ctx) return;
+    const rect = canvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, rect.width, rect.height);
+    canvasOptions.strokeStyle = color;
+    Object.assign(ctx, canvasOptions);
+
+    reDraw();
+    updateSign();
+  };
+  const undo = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (storkesRef.current.length > 0) {
+      storkesRef.current.pop();
+      const canvas = canvasRef.current;
+      const ctx = ctxRef.current;
+      if (!canvas || !ctx) return;
+      const rect = canvas.getBoundingClientRect();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, rect.width, rect.height);
+      reDraw();
+      updateSign();
+    }
+  };
+
+  useEffect(initCanvas, []);
+  useEffect(clear);
+
   return (
     <>
       <div className="px-6 pb-4">
         <div className="mb-2 flex items-center justify-end gap-2">
-          <a href="#" className="text-brand">
+          <a href="#" onClick={(e) => undo(e)} className="text-brand">
             回上一步
           </a>
-          <a href="javascript:;" onClick={clearRect} className="text-brand">
+          <a href="#" onClick={(e) => clear(e)} className="text-brand">
             清除
           </a>
         </div>
@@ -129,19 +183,24 @@ export function SignaturePad() {
             onMouseMove={(e) => mouseMove(e)}
             onMouseUp={() => mouseup()}
             onMouseLeave={() => mouseup()}
+            onTouchStart={(e) => mouseDown(e)}
+            onTouchMove={(e) => mouseMove(e)}
+            onTouchEnd={() => mouseup()}
             ref={canvasRef}
-            className="w-full h-[156px]">
-          </canvas>
+            className="h-[156px] w-full"></canvas>
           <div className="absolute right-2 bottom-2 flex items-center gap-2">
             <button
               type="button"
-              className="h-3 w-3 rounded-full bg-[#000]" onClick={(e) => changeColor('#000', e)}></button>
+              className="h-3 w-3 rounded-full bg-[#000]"
+              onClick={(e) => changeColor('#000', e)}></button>
             <button
               type="button"
-              className="h-3 w-3 rounded-full bg-blue-600"  onClick={(e) => changeColor('#155dfc',e)}></button>
+              className="h-3 w-3 rounded-full bg-blue-600"
+              onClick={(e) => changeColor('#155dfc', e)}></button>
             <button
               type="button"
-              className="h-3 w-3 rounded-full bg-red-600" onClick={(e) => changeColor('#e7000b', e)}></button>
+              className="h-3 w-3 rounded-full bg-red-600"
+              onClick={(e) => changeColor('#e7000b', e)}></button>
           </div>
         </div>
       </div>
