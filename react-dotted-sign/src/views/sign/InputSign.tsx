@@ -6,15 +6,13 @@ export function InputSign({
   setCurrentSign,
   setSignOptions,
   signOptions,
+  currentSign,
 }: {
   setCurrentSign: (sign: string) => void;
   setSignOptions: (font: signOptions) => void;
   signOptions: signOptions;
+  currentSign: string;
 }) {
-  const [text, setText] = useState('');
-  useEffect(() => {
-    setCurrentSign(text);
-  }, [text]);
   return (
     <>
       <div className="px-6 pb-4">
@@ -46,9 +44,9 @@ export function InputSign({
           <div className="mx-auto w-[80%]">
             <input
               type="text"
-              value={text}
+              value={currentSign}
               onChange={(e) => {
-                setText(e.target.value);
+                setCurrentSign(e.target.value);
               }}
               placeholder="請在這裡輸入您的簽名"
               style={{

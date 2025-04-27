@@ -68,6 +68,10 @@ export function SignSettingSection() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  const selectTab = (key: TabKey) => {
+    setCurrentSign('');
+    setKey(key);
+  };
   const changeTab = (key: string) => {
     switch (key) {
       case 'InputSign':
@@ -160,8 +164,8 @@ export function SignSettingSection() {
   };
 
   useEffect(() => {
-    setSign('');
-  }, [isModalOpen, key]);
+    setCurrentSign('');
+  }, [isModalOpen]);
 
   return (
     <>
@@ -202,19 +206,19 @@ export function SignSettingSection() {
         onCancel={handleCancel}>
         <div className="relative mb-4 pt-5">
           <button
-            onClick={() => setKey('InputSign')}
+            onClick={() => selectTab('InputSign')}
             className="border-grey text-brand inline-block w-1/3 border-b py-2 text-center"
             type="button">
             輸入
           </button>
           <button
-            onClick={() => setKey('SignaturePad')}
+            onClick={() => selectTab('SignaturePad')}
             className="border-grey inline-block w-1/3 border-b py-2 text-center"
             type="button">
             手寫
           </button>
           <button
-            onClick={() => setKey('UploadFile')}
+            onClick={() => selectTab('UploadFile')}
             className="border-grey inline-block w-1/3 border-b py-2 text-center"
             type="button">
             上傳
@@ -227,6 +231,7 @@ export function SignSettingSection() {
             setCurrentSign={setSign}
             setSignOptions={setSignOptions}
             signOptions={signOptions}
+            currentSign={currentSign}
           />
         )}
         {key === 'SignaturePad' && (
