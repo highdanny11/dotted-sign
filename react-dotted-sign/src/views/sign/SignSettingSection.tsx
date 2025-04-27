@@ -33,11 +33,15 @@ const renderCloseBtn = (
 
 export function SignSettingSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [signOptions, setSignOptions] = useState({
+    fontfamily: 'Noto Sans TC',
+    color: '#000',
+  });
   const [key, setKey] = useState<TabKey>('InputSign');
+  const [currentSign, setCurrentSign] = useState<string>('');
   const canvasList = useSignStore((state) => state.canvasList);
-  const currentSign = useRef('');
   const setSign = useCallback((sign: string) => {
-    currentSign.current = sign;
+    setCurrentSign(sign);
   }, []);
 
   const deleteObject = (
@@ -75,9 +79,9 @@ export function SignSettingSection() {
     }
   };
 
-  const save = () => {
+  const saveSignaturePad = () => {
     const img = document.createElement('img');
-    img.src = currentSign.current;
+    img.src = currentSign;
     img.onload = () => {
       const data = new fabric.Image(img, {
         top: 400,
@@ -94,10 +98,70 @@ export function SignSettingSection() {
         render: renderCloseBtn,
       });
       canvasList[0].add(data);
-      // addSignature(0, data);
     };
+  };
+  const saveInputSign = () => {
+    const text = new fabric.IText(currentSign, {
+      left: 100,
+      top: 100,
+      fontSize: 40,
+      fill: signOptions.color,
+      fontFamily: signOptions.fontfamily,
+    });
+    text.controls.deleteControl = new fabric.Control({
+      x: 0.5,
+      y: -0.5,
+      offsetY: 16,
+      cursorStyle: 'pointer',
+      mouseUpHandler: deleteObject,
+      render: renderCloseBtn,
+    });
+    canvasList[0].add(text);
+  };
+  const saveUploadFile = () => {
+    const img = document.createElement('img');
+    img.src = currentSign;
+    img.onload = () => {
+      const data = new fabric.Image(img, {
+        top: 400,
+        width: img.width,
+        height: img.height,
+      });
+
+      data.controls.deleteControl = new fabric.Control({
+        x: 0.5,
+        y: -0.5,
+        offsetY: 16,
+        cursorStyle: 'pointer',
+        mouseUpHandler: deleteObject,
+        render: renderCloseBtn,
+      });
+      canvasList[0].add(data);
+    };
+    img.onerror = (error) => {
+      console.error('Error loading image:', error);
+    };
+  };
+
+  const save = () => {
+    switch (key) {
+      case 'InputSign':
+        saveInputSign();
+        break;
+      case 'SignaturePad':
+        saveSignaturePad();
+        break;
+      case 'UploadFile':
+        saveUploadFile();
+        break;
+    }
+    setSign('');
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    setSign('');
+  }, [isModalOpen, key]);
 
   return (
     <>
@@ -158,9 +222,19 @@ export function SignSettingSection() {
           <span
             className={`bg-brand absolute bottom-0 left-0 inline-block h-[2px] w-1/3 translate-y-1/2 duration-200 ${changeTab(key)}`}></span>
         </div>
-        {key === 'InputSign' && <InputSign />}
-        {key === 'SignaturePad' && <SignaturePad setCurrentSign={setSign} />}
-        {key === 'UploadFile' && <UploadFile />}
+        {key === 'InputSign' && (
+          <InputSign
+            setCurrentSign={setSign}
+            setSignOptions={setSignOptions}
+            signOptions={signOptions}
+          />
+        )}
+        {key === 'SignaturePad' && (
+          <SignaturePad setCurrentSign={setSign} currentSign={currentSign} />
+        )}
+        {key === 'UploadFile' && (
+          <UploadFile setCurrentSign={setSign} currentSign={currentSign} />
+        )}
         <div>
           <p className="text-dark-grey mb-2 text-center text-xs">
             我了解這是一個具法律效力的本人簽名

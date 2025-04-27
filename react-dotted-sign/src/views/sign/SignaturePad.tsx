@@ -1,7 +1,9 @@
 export function SignaturePad({
   setCurrentSign,
+  currentSign,
 }: {
   setCurrentSign: (sign: string) => void;
+  currentSign: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -163,8 +165,14 @@ export function SignaturePad({
     }
   };
 
-  useEffect(initCanvas, []);
-  useEffect(clear);
+  useEffect(() => {
+    initCanvas();
+  }, []);
+  useEffect(() => {
+    if (!currentSign) {
+      clear();
+    }
+  }, [currentSign]);
 
   return (
     <>

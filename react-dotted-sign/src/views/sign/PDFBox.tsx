@@ -13,7 +13,6 @@ export function PDFBox({ pdfCanvas, index, currentPage }: PDFBoxProps) {
   const canvasRef = useRef<fabric.Canvas | null>(null);
   const canvasList = useSignStore((state) => state.canvasList);
   const setCanvasList = useSignStore((state) => state.setCanvasList);
-  const signature = useSignStore((state) => state.signature);
 
   async function pdfToImage(pdfData: HTMLCanvasElement) {
     const data = pdfData as unknown as HTMLImageElement;

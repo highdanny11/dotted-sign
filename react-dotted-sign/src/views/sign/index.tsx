@@ -4,7 +4,6 @@ import { SignSettingSection } from './SignSettingSection';
 import { useSignStore } from '@/store/useSign';
 import { fileToBase64 } from '@/utils/fileToBase64';
 import { PDFUtils } from '@/utils/PDFUtils';
-import { memo } from 'react';
 // https://github.com/ChangChiao/f2e-2022-sign/blob/main/src/components/PDFItem.tsx
 // https://eminent-temple-cd0.notion.site/PDF-da0347f450af4f67975e2c2d699c6c3e
 import {
