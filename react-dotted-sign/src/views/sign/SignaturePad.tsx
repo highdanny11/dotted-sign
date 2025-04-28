@@ -115,6 +115,7 @@ export function SignaturePad({
   };
 
   const handleMouseUp = () => {
+    if (!isDrawing) return;
     isDrawing = false;
     if (!ctxRef.current) return;
     currentStroke && storkesRef.current.push(currentStroke);

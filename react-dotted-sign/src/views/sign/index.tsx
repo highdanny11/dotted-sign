@@ -98,7 +98,7 @@ export function Sign() {
           </main>
           <div className="border-grey border-t bg-white p-6 lg:flex lg:max-h-[calc(100vh-135px)] lg:basis-[300px] lg:flex-col lg:justify-between lg:border-none xl:basis-[402px]">
             <div className="hidden h-[200px] lg:block">
-              <SignSettingSection />
+              <SignSettingSection currentPage={currentPage}/>
             </div>
             <Button
               type="button"
@@ -117,7 +117,7 @@ export function Sign() {
                 onClick={() => setIsModalOpen(false)}>
                 <MdClose className="text-xl" />
               </button>
-              <SignSettingSection />
+              <SignSettingSection  currentPage={currentPage}/>
             </div>
           </div>
         </div>

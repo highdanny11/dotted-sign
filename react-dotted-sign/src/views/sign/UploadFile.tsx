@@ -48,7 +48,7 @@ export function UploadFile({
         className="border-ui-grey relative flex h-[180px] cursor-pointer items-center justify-center rounded border py-3">
         <div className="text-center">
           {currentSign ? (
-            <img src={currentSign} />
+            <img src={currentSign} className='h-[180px] w-full' />
           ) : (
             <>
               <div className="border-grey mb-10 inline-flex h-[38px] w-[102px] items-center justify-center rounded border">

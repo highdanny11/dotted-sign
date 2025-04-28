@@ -7,31 +7,11 @@ import { UploadFile } from './UploadFile';
 import { useSignStore } from '@/store/useSign';
 import { MdDragIndicator } from 'react-icons/md';
 import { fabric } from 'fabric';
+import { setFabricDeleteControl } from '@/utils/setFabricDeleteControl'
 
 type TabKey = 'InputSign' | 'SignaturePad' | 'UploadFile';
 
-const renderCloseBtn = (
-  ctx: CanvasRenderingContext2D,
-  left: number,
-  top: number,
-  _styleOverride: any,
-  faricObject: fabric.Object
-) => {
-  const img = document.createElement('img');
-
-  const deleteIcon =
-    "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Ebene_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='595.275px' height='595.275px' viewBox='200 215 230 470' xml:space='preserve'%3E%3Ccircle style='fill:%23F44336;' cx='299.76' cy='439.067' r='218.516'/%3E%3Cg%3E%3Crect x='267.162' y='307.978' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -222.6202 340.6915)' style='fill:white;' width='65.545' height='262.18'/%3E%3Crect x='266.988' y='308.153' transform='matrix(0.7071 0.7071 -0.7071 0.7071 398.3889 -83.3116)' style='fill:white;' width='65.544' height='262.179'/%3E%3C/g%3E%3C/svg%3E";
-
-  img.src = deleteIcon;
-  const size = 30;
-  ctx.save();
-  ctx.translate(left, top);
-  ctx.rotate(fabric.util.degreesToRadians(faricObject.angle!));
-  ctx.drawImage(img, -size / 2, -size / 2, size, size);
-  ctx.restore();
-};
-
-export function SignSettingSection() {
+export function SignSettingSection({currentPage}: {currentPage: number}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [signOptions, setSignOptions] = useState({
     fontfamily: 'Noto Sans TC',
@@ -43,31 +23,6 @@ export function SignSettingSection() {
   const setSign = useCallback((sign: string) => {
     setCurrentSign(sign);
   }, []);
-
-  const deleteObject = (
-    _eventData: MouseEvent,
-    transformData: fabric.Transform
-  ) => {
-    const target = transformData.target;
-    if (target) {
-      target.canvas?.remove(target);
-      target.canvas?.requestRenderAll();
-    }
-
-    return true;
-  };
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
   const selectTab = (key: TabKey) => {
     setCurrentSign('');
     setKey(key);
@@ -83,7 +38,7 @@ export function SignSettingSection() {
     }
   };
 
-  const saveSignaturePad = () => {
+  const saveSignaturePadAndInputSign = () => {
     const img = document.createElement('img');
     img.src = currentSign;
     img.onload = () => {
@@ -93,15 +48,8 @@ export function SignSettingSection() {
         height: img.height,
       });
 
-      data.controls.deleteControl = new fabric.Control({
-        x: 0.5,
-        y: -0.5,
-        offsetY: 16,
-        cursorStyle: 'pointer',
-        mouseUpHandler: deleteObject,
-        render: renderCloseBtn,
-      });
-      canvasList[0].add(data);
+      data.controls.deleteControl = setFabricDeleteControl()
+      canvasList[currentPage].add(data);
     };
   };
   const saveInputSign = () => {
@@ -112,51 +60,21 @@ export function SignSettingSection() {
       fill: signOptions.color,
       fontFamily: signOptions.fontfamily,
     });
-    text.controls.deleteControl = new fabric.Control({
-      x: 0.5,
-      y: -0.5,
-      offsetY: 16,
-      cursorStyle: 'pointer',
-      mouseUpHandler: deleteObject,
-      render: renderCloseBtn,
-    });
-    canvasList[0].add(text);
-  };
-  const saveUploadFile = () => {
-    const img = document.createElement('img');
-    img.src = currentSign;
-    img.onload = () => {
-      const data = new fabric.Image(img, {
-        top: 400,
-        width: img.width,
-        height: img.height,
-      });
-
-      data.controls.deleteControl = new fabric.Control({
-        x: 0.5,
-        y: -0.5,
-        offsetY: 16,
-        cursorStyle: 'pointer',
-        mouseUpHandler: deleteObject,
-        render: renderCloseBtn,
-      });
-      canvasList[0].add(data);
-    };
-    img.onerror = (error) => {
-      console.error('Error loading image:', error);
-    };
+    text.controls.deleteControl = setFabricDeleteControl()
+    canvasList[currentPage].add(text);
   };
 
   const save = () => {
+    if (!currentSign) return;
     switch (key) {
       case 'InputSign':
         saveInputSign();
         break;
       case 'SignaturePad':
-        saveSignaturePad();
+        saveSignaturePadAndInputSign();
         break;
       case 'UploadFile':
-        saveUploadFile();
+        saveSignaturePadAndInputSign();
         break;
     }
     setSign('');
@@ -179,7 +97,7 @@ export function SignSettingSection() {
         theme="primary-outline"
         size="lg"
         className="w-full"
-        onClick={showModal}>
+        onClick={() => setIsModalOpen(true)}>
         創建簽名檔
       </Button>
       <div className="mt-2">
@@ -194,7 +112,7 @@ export function SignSettingSection() {
         open={isModalOpen}
         footer={null}
         className="custom-modal"
-        onOk={handleOk}
+        onOk={() => setIsModalOpen(false)}
         width={{
           xs: '90%',
           sm: '80%',
@@ -203,7 +121,7 @@ export function SignSettingSection() {
           xl: '500px',
           xxl: '500px',
         }}
-        onCancel={handleCancel}>
+        onCancel={() => setIsModalOpen(false)}>
         <div className="relative mb-4 pt-5">
           <button
             onClick={() => selectTab('InputSign')}
@@ -244,12 +162,15 @@ export function SignSettingSection() {
           <p className="text-dark-grey mb-2 text-center text-xs">
             我了解這是一個具法律效力的本人簽名
           </p>
-          <button
+          <Button
             onClick={save}
             type="button"
-            className="bg-brand mx-auto flex h-[38px] w-[102px] items-center justify-center rounded text-white">
+            size="lg"
+            theme="primary"
+            disabled={!currentSign}
+            className='mx-auto flex items-center justify-center'>
             儲存
-          </button>
+          </Button>
         </div>
       </Modal>
     </>
