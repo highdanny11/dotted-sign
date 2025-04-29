@@ -15,6 +15,10 @@ export function HomePage() {
   const navigate = useNavigate();
 
   const finishFile = (file: File) => {
+    if (file.size > 3 * 1024 * 1024 || file.type !== 'application/pdf') {
+      navigate('/file-error');
+      return;
+    }
     setFileName(file.name);
     setFile(file);
     navigate('/sign');

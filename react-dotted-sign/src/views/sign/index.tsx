@@ -5,7 +5,7 @@ import { useSignStore } from '@/store/useSign';
 import { fileToBase64 } from '@/utils/fileToBase64';
 import { PDFUtils } from '@/utils/PDFUtils';
 import { Image } from 'antd';
-import { jsPDF } from "jspdf";
+import { jsPDF } from 'jspdf';
 // https://github.com/ChangChiao/f2e-2022-sign/blob/main/src/components/PDFItem.tsx
 // https://eminent-temple-cd0.notion.site/PDF-da0347f450af4f67975e2c2d699c6c3e
 import {
@@ -40,24 +40,25 @@ export function Sign() {
   }, [file]);
 
   const openImage = async () => {
-    const base64 = canvasList[currentPage].toDataURL()
+    const base64 = canvasList[currentPage].toDataURL();
     setCurrentImage(base64);
     setVisible(true);
-  }
+  };
 
   const finishSignPDF = () => {
-    console.log(canvasList)
     const pdf = new jsPDF();
-
-    canvasList.forEach((canvas) => {
+    canvasList.forEach((canvas, index) => {
       const base64 = canvas.toDataURL();
-      const width = pdf.internal.pageSize.width;
-      const height = pdf.internal.pageSize.height;
-      pdf.addImage(base64, "png", 0, 0, width, height);
-    })
+      const width = pdf.internal.pageSize.getWidth();
+      const height = (canvas.height! * width) / canvas.width!;
+      if (index > 0) {
+        pdf.addPage();
+      }
+      pdf.addImage(base64, 'png', 0, 0, width, height);
+    });
 
-    pdf.save("download.pdf");
-  }
+    pdf.save('download.pdf');
+  };
 
   return (
     <>
@@ -96,7 +97,10 @@ export function Sign() {
                   <button
                     type="button"
                     onClick={() =>
-                      setCurrentPage((prev) => (prev < cavasPdf.length - 1 ? prev + 1 : prev - 1))}
+                      setCurrentPage((prev) =>
+                        prev < cavasPdf.length - 1 ? prev + 1 : prev - 1
+                      )
+                    }
                     className="border-grey rounded border bg-white p-1">
                     <MdArrowBackIosNew className="text-dark-grey text-xl" />
                   </button>
@@ -126,7 +130,7 @@ export function Sign() {
           </main>
           <div className="border-grey border-t bg-white p-6 lg:flex lg:max-h-[calc(100vh-135px)] lg:basis-[300px] lg:flex-col lg:justify-between lg:border-none xl:basis-[402px]">
             <div className="hidden h-[200px] lg:block">
-              <SignSettingSection currentPage={currentPage}/>
+              <SignSettingSection currentPage={currentPage} />
             </div>
             <Button
               type="button"
@@ -146,7 +150,7 @@ export function Sign() {
                 onClick={() => setIsModalOpen(false)}>
                 <MdClose className="text-xl" />
               </button>
-              <SignSettingSection  currentPage={currentPage}/>
+              <SignSettingSection currentPage={currentPage} />
             </div>
           </div>
           {currentImage && (

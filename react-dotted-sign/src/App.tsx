@@ -50,6 +50,14 @@ function App() {
             </RegisterLayout>
           }></Route>
         <Route path="*" element={<Error404 />}></Route>
+        <Route
+          path="/file-error"
+          element={
+            <Error404
+              title="您的檔案無法上傳"
+              description="請重新上傳檔案。確認檔案大小在10Mb以內，檔案格式為PDF。"
+            />
+          }></Route>
       </Routes>
     </ConfigProvider>
   );
