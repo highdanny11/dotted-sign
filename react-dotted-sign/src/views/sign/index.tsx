@@ -4,6 +4,8 @@ import { SignSettingSection } from './SignSettingSection';
 import { useSignStore } from '@/store/useSign';
 import { fileToBase64 } from '@/utils/fileToBase64';
 import { PDFUtils } from '@/utils/PDFUtils';
+import { Image } from 'antd';
+import { jsPDF } from "jspdf";
 // https://github.com/ChangChiao/f2e-2022-sign/blob/main/src/components/PDFItem.tsx
 // https://eminent-temple-cd0.notion.site/PDF-da0347f450af4f67975e2c2d699c6c3e
 import {
@@ -18,21 +20,44 @@ import { PDFBox } from './PDFBox';
 
 export function Sign() {
   const file = useSignStore((state) => state.file);
+  const canvasList = useSignStore((state) => state.canvasList);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cavasPdf, setCavasPdf] = useState<HTMLCanvasElement[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [currentImage, setCurrentImage] = useState<string>('');
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const handleFileChange = async (file: File) => {
       const base64String = await fileToBase64(file);
-      const canvasList = await PDFUtils(base64String);
-      setCavasPdf(canvasList);
+      const canvas = await PDFUtils(base64String);
+      setCavasPdf(canvas);
     };
 
     if (file) {
       handleFileChange(file);
     }
   }, [file]);
+
+  const openImage = async () => {
+    const base64 = canvasList[currentPage].toDataURL()
+    setCurrentImage(base64);
+    setVisible(true);
+  }
+
+  const finishSignPDF = () => {
+    console.log(canvasList)
+    const pdf = new jsPDF();
+
+    canvasList.forEach((canvas) => {
+      const base64 = canvas.toDataURL();
+      const width = pdf.internal.pageSize.width;
+      const height = pdf.internal.pageSize.height;
+      pdf.addImage(base64, "png", 0, 0, width, height);
+    })
+
+    pdf.save("download.pdf");
+  }
 
   return (
     <>
@@ -62,6 +87,7 @@ export function Sign() {
                 <li>
                   <button
                     type="button"
+                    onClick={openImage}
                     className="border-grey rounded border bg-white p-1">
                     <MdHighlightAlt className="text-dark-grey text-xl" />
                   </button>
@@ -69,6 +95,8 @@ export function Sign() {
                 <li>
                   <button
                     type="button"
+                    onClick={() =>
+                      setCurrentPage((prev) => (prev < cavasPdf.length - 1 ? prev + 1 : prev - 1))}
                     className="border-grey rounded border bg-white p-1">
                     <MdArrowBackIosNew className="text-dark-grey text-xl" />
                   </button>
@@ -102,6 +130,7 @@ export function Sign() {
             </div>
             <Button
               type="button"
+              onClick={finishSignPDF}
               className="w-full"
               theme="primary-outline"
               size="lg">
@@ -120,6 +149,20 @@ export function Sign() {
               <SignSettingSection  currentPage={currentPage}/>
             </div>
           </div>
+          {currentImage && (
+            <Image
+              style={{
+                display: 'none',
+              }}
+              preview={{
+                visible,
+                onVisibleChange: (vis) => {
+                  setVisible(vis);
+                },
+              }}
+              src={currentImage}
+            />
+          )}
         </div>
       </div>
     </>

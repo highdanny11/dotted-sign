@@ -96,16 +96,17 @@ export function SignSettingSection({currentPage}: {currentPage: number}) {
       <Button
         theme="primary-outline"
         size="lg"
-        className="w-full"
+        className="w-full mb-2"
         onClick={() => setIsModalOpen(true)}>
-        創建簽名檔
+        加入簽名
       </Button>
       <div className="mt-2">
-        <ul>
+        {/* 此列表是有註冊會員才能使用的功能 */}
+        {/* <ul>
           <li className="group flex h-[72px] items-center">
             <MdDragIndicator className="text-grey group-hover:text-brand mr-2 duration-200" />
           </li>
-        </ul>
+        </ul> */}
       </div>
       <Modal
         title=""

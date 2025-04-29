@@ -2,6 +2,7 @@ import { fabric } from 'fabric';
 import { Canvas } from 'fabric/fabric-impl';
 import { useSignStore } from '@/store/useSign';
 
+
 interface PDFBoxProps {
   pdfCanvas: HTMLCanvasElement;
   index: number;
