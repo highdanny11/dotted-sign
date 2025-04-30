@@ -1,5 +1,4 @@
 import { fabric } from 'fabric';
-import { Canvas } from 'fabric/fabric-impl';
 import { useSignStore } from '@/store/useSign';
 
 
@@ -12,7 +11,6 @@ interface PDFBoxProps {
 export function PDFBox({ pdfCanvas, index, currentPage }: PDFBoxProps) {
   const pdfWrap = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<fabric.Canvas | null>(null);
-  const canvasList = useSignStore((state) => state.canvasList);
   const setCanvasList = useSignStore((state) => state.setCanvasList);
 
   async function pdfToImage(pdfData: HTMLCanvasElement) {
@@ -30,41 +28,35 @@ export function PDFBox({ pdfCanvas, index, currentPage }: PDFBoxProps) {
 
   useEffect(() => {
     async function renderPDF() {
-      if (index !== currentPage) return;
-      if (!canvasRef.current) {
-        canvasRef.current = new fabric.Canvas(`PDF-${index}`);
+      try {
+        if (!canvasRef.current) {
+          canvasRef.current = new fabric.Canvas(`PDF-${index}`);
+        }
+        canvasRef.current.requestRenderAll();
+        const img = await pdfToImage(pdfCanvas);
+        canvasRef.current.setWidth(img.width! * img.scaleX!);
+        canvasRef.current.setHeight(img.height! * img.scaleY!);
+        canvasRef.current.setBackgroundImage(
+          img,
+          canvasRef.current.renderAll.bind(canvasRef.current)
+        );
+        setCanvasList(canvasRef.current!, index);
+      }catch (error) {
+        console.error('Error rendering PDF:', error);
       }
-      canvasRef.current.requestRenderAll();
-      const img = await pdfToImage(pdfCanvas);
-      canvasRef.current.setWidth(img.width! * img.scaleX!);
-      canvasRef.current.setHeight(img.height! * img.scaleY!);
-      canvasRef.current.setBackgroundImage(
-        img,
-        canvasRef.current.renderAll.bind(canvasRef.current)
-      );
-      const newList = [...canvasList];
-      newList[index] = canvasRef.current!;
-      setCanvasList(newList);
+      
     }
     renderPDF();
   }, [pdfCanvas, currentPage]);
 
-  // useEffect(() => {
-  //   canvasRef.current?.renderAll();
-  //   if (signature[index]?.length === 0) return;
-  //   signature[index]?.forEach((item) => {
-  //     if (canvasRef.current) {
-  //       canvasRef.current.add(item);
-  //       canvasRef.current.renderAll();
-  //     }
-  //   });
-  // }, [signature]);
   return (
     <>
       <div
         ref={pdfWrap}
-        className={`relative w-full justify-center ${index === currentPage ? 'flex' : 'hidden'}`}>
-        <canvas id={`PDF-${index}`}></canvas>
+        className={`w-full absolute justify-center flex top-[55%] left-1/2 -translate-x-1/2 -translate-y-1/2 ${index === currentPage ? ' z-10' : ''}`}>
+          <div className='py-10'>
+            <canvas id={`PDF-${index}`}></canvas>
+          </div>
       </div>
     </>
   );

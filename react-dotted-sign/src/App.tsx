@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { HomePage } from './views/home/HomePage';
 import { Error404 } from './views/error/Error404';
+import { FinishSign } from './views/sign/FinishSign';
 import { Layout } from './layout/Layout';
 import { RegisterLayout } from './layout/RegisterLayout';
 import { Login } from './views/login/Login';
@@ -57,6 +58,11 @@ function App() {
               title="您的檔案無法上傳"
               description="請重新上傳檔案。確認檔案大小在10Mb以內，檔案格式為PDF。"
             />
+          }></Route>
+          <Route
+          path="/finish-file"
+          element={
+            <FinishSign />
           }></Route>
       </Routes>
     </ConfigProvider>

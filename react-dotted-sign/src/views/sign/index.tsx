@@ -5,7 +5,8 @@ import { useSignStore } from '@/store/useSign';
 import { fileToBase64 } from '@/utils/fileToBase64';
 import { PDFUtils } from '@/utils/PDFUtils';
 import { Image } from 'antd';
-import { jsPDF } from 'jspdf';
+import { useNavigate } from 'react-router';
+import { Spin } from "antd";
 // https://github.com/ChangChiao/f2e-2022-sign/blob/main/src/components/PDFItem.tsx
 // https://eminent-temple-cd0.notion.site/PDF-da0347f450af4f67975e2c2d699c6c3e
 import {
@@ -26,12 +27,20 @@ export function Sign() {
   const [currentPage, setCurrentPage] = useState(0);
   const [currentImage, setCurrentImage] = useState<string>('');
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleFileChange = async (file: File) => {
-      const base64String = await fileToBase64(file);
-      const canvas = await PDFUtils(base64String);
-      setCavasPdf(canvas);
+      try {
+        const base64String = await fileToBase64(file);
+        const canvas = await PDFUtils(base64String);
+        setCavasPdf(canvas);
+      }catch(e) {
+        console.log('Error converting file to base64:', e);
+      }finally {
+        setLoading(false);
+      }
     };
 
     if (file) {
@@ -46,18 +55,7 @@ export function Sign() {
   };
 
   const finishSignPDF = () => {
-    const pdf = new jsPDF();
-    canvasList.forEach((canvas, index) => {
-      const base64 = canvas.toDataURL();
-      const width = pdf.internal.pageSize.getWidth();
-      const height = (canvas.height! * width) / canvas.width!;
-      if (index > 0) {
-        pdf.addPage();
-      }
-      pdf.addImage(base64, 'png', 0, 0, width, height);
-    });
-
-    pdf.save('download.pdf');
+    navigate('/finish-file')
   };
 
   return (
@@ -65,18 +63,24 @@ export function Sign() {
       <Step />
       <div className="border-grey overflow-hidden border-t">
         <div className="relative lg:container lg:flex">
-          <main className="bg-ui-grey h-[calc(100vh-240px)] overflow-auto p-6 lg:h-[calc(100vh-135px)] lg:flex-grow-1 xl:px-12">
-            {cavasPdf.map((canvas, index) => (
-              <PDFBox
-                key={index}
-                pdfCanvas={canvas}
-                index={index}
-                currentPage={currentPage}
-              />
-            ))}
-            {/* <div className="bg-grey h-[1200px]"></div> */}
+          <main className="bg-ui-grey lg:flex-grow-1 ">
+            <div className='h-[calc(100vh-240px)] lg:h-[calc(100vh-135px)] overflow-auto relative p-6 xl:px-12'>
+              {!loading && cavasPdf.map((canvas, index) => (
+                <PDFBox
+                  key={index}
+                  pdfCanvas={canvas}
+                  index={index}
+                  currentPage={currentPage}
+                />
+              ))}
+              {loading && (
+                <div className="bg-grey h-[1000px] flex items-center justify-center">
+                  <Spin size="large" />
+                </div>
+              )}
+            </div>
             {/* 功能列 */}
-            <div className="absolute bottom-[120px] left-12 lg:bottom-10 lg:left-[9%]">
+            <div className="absolute bottom-[120px] left-12 lg:bottom-10 lg:left-[9%] z-20">
               <ul className="flex items-center gap-2">
                 <li>
                   <button
