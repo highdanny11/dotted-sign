@@ -59,11 +59,7 @@ function App() {
               description="請重新上傳檔案。確認檔案大小在10Mb以內，檔案格式為PDF。"
             />
           }></Route>
-          <Route
-          path="/finish-file"
-          element={
-            <FinishSign />
-          }></Route>
+        <Route path="/finish-file" element={<FinishSign />}></Route>
       </Routes>
     </ConfigProvider>
   );

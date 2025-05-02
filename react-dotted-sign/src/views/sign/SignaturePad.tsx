@@ -83,7 +83,6 @@ export function SignaturePad({
   };
 
   const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
     const canvas = canvasRef.current;
     const ctx = ctxRef.current;
     if (!canvas || !ctx) return;
@@ -137,7 +136,6 @@ export function SignaturePad({
   };
 
   const changeColor = (color: string, e: React.MouseEvent) => {
-    e.preventDefault();
     const canvas = canvasRef.current;
     const ctx = ctxRef.current;
     if (!canvas || !ctx) return;
@@ -151,7 +149,6 @@ export function SignaturePad({
     updateSign();
   };
   const undo = (e: React.MouseEvent) => {
-    e.preventDefault();
     if (storkesRef.current.length > 0) {
       storkesRef.current.pop();
       const canvas = canvasRef.current;
