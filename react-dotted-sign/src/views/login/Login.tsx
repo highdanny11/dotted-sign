@@ -5,6 +5,9 @@ import LoginImg from '@/assets/LoginImg.svg';
 import { Link } from 'react-router';
 
 export function Login() {
+  const facebookLogin = () => {
+    window.open('http://localhost:8080/api/users/facebook', '_self');
+  };
   return (
     <div className="items-center justify-between gap-4 md:flex">
       <div className="flex-grow md:pt-10 lg:max-w-[416px]">
@@ -21,6 +24,7 @@ export function Login() {
           <li className="w-1/2">
             <button
               type="button"
+              onClick={facebookLogin}
               className="text-sx flex min-h-[48px] w-full items-center justify-center gap-2 rounded border border-[#1877F2]">
               <img src={Facebook} alt="FacebookIcon" />
               透過 facebook 登入
@@ -48,7 +52,7 @@ export function Login() {
           </button>
           <p className="text-center text-sm">
             還沒有帳戶?
-            <Link className="text-brand pl-2 text-sm underline" to="/">
+            <Link className="text-brand pl-2 text-sm underline" to="/register">
               註冊
             </Link>
           </p>

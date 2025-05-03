@@ -11,8 +11,6 @@ import { Sign } from './views/sign';
 import { ConfigProvider } from 'antd';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <ConfigProvider
       theme={{

@@ -18,6 +18,12 @@ export function HomeHeader() {
   const backHome = () => {
     navigate('/');
   };
+  const login = () => {
+    navigate('/login');
+  };
+  const register = () => {
+    navigate('/register');
+  };
 
   useEffect(() => {
     if (location.pathname === '/') {
@@ -49,11 +55,13 @@ export function HomeHeader() {
           <div className="flex gap-2">
             <button
               className="border-brand text-brand flex min-h-[38px] w-[86px] cursor-pointer items-center justify-center rounded border"
+              onClick={login}
               type="button">
               登入
             </button>
             <button
               className="bg-brand flex min-h-[38px] w-[86px] cursor-pointer items-center justify-center rounded text-white"
+              onClick={register}
               type="button">
               註冊
             </button>

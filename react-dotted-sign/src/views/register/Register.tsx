@@ -50,14 +50,16 @@ export function Register() {
           </button>
           <p className="text-center text-sm">
             已經有帳戶?
-            <Link className="text-brand pl-2 text-sm underline" to="/">
+            <Link className="text-brand pl-2 text-sm underline" to="/login">
               登入
             </Link>
           </p>
         </form>
       </div>
       <div className="hidden flex-grow md:block lg:max-w-[416px]">
-        <h3 className="text-center text-xl font-bold">為高效率的您，提供快速的服務。</h3>
+        <h3 className="text-center text-xl font-bold">
+          為高效率的您，提供快速的服務。
+        </h3>
         <img src={RegisterImg} alt="RegisterImg" />
       </div>
     </div>
