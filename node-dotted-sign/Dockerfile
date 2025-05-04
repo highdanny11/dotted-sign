@@ -2,8 +2,13 @@ FROM node:20-alpine3.19
 ENV NODE_ENV=production
 
 WORKDIR /app
-COPY . .
 
-RUN npm ci --production
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+# RUN npm ci --production
 
 CMD ["node", "./dist/app.js"]

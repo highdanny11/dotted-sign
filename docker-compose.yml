@@ -1,6 +1,7 @@
-version: "3.8"
 volumes:
   pgData:
+networks:
+  bootcamp_network:
 services:
   postgres:
     image: postgres:16.4-alpine3.20
@@ -22,9 +23,8 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
-  bootcamp-fitness:
-    build:
-      dockerfile: Dockerfile
+  backend:
+    build: ./node-dotted-sign
     env_file:
       - .env
     ports:
@@ -39,5 +39,16 @@ services:
         compress: "true"
     deploy:
       replicas: 1
-networks:
-  bootcamp_network:
+    depends_on:
+      postgres:
+        condition: service_healthy
+  frontend:
+    build: ./react-dotted-sign
+    ports:
+      - "5173:5173"
+    networks:
+      - bootcamp_network
+    environment:
+      - HOST=0.0.0.0
+    depends_on:
+      - backend
