@@ -90,14 +90,7 @@ router.get(
     session: false,
   }),
   (req, res) => {
-    console.log(req);
     res.redirect("http://localhost:5173/#");
-    // res.status(200).json({
-    //   status: "success",
-    //   data: {
-    //     user: "req.user",
-    //   },
-    // });
   }
 );
 router.post("/signup", registerMiddlerware, regsiter);

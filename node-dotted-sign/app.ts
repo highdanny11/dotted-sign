@@ -48,15 +48,6 @@ app.use(
   })
 );
 
-app.get("/", (request: Request, response: Response) => {
-  response.send(`<h1>Hello, Node test build</h1>`);
-});
-app.get("/healthcheck", (req: Request, res: Response) => {
-  res.status(200).json({
-    status: "success",
-    message: "Server is healthy",
-  });
-});
 app.use("/api/users", users);
 app.use("/api/files", files);
 
