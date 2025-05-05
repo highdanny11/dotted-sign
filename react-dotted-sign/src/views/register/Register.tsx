@@ -3,6 +3,7 @@ import Facebook from '@/assets/Facebook.svg';
 import Logo from '@/assets/Logo.svg';
 import RegisterImg from '@/assets/RegisterImg.svg';
 import { Link } from 'react-router';
+import { Input } from '@/component/form/Input';
 
 export function Register() {
   return (
@@ -28,19 +29,19 @@ export function Register() {
           </li>
         </ul>
         <form className="border-grey border-t pt-6 text-center">
-          <input
+          <Input
             className="border-grey mb-3 w-full rounded border p-3 text-sm leading-0"
             type="text"
             placeholder="請輸入姓名"
           />
-          <input
+          <Input
             className="border-grey mb-3 w-full rounded border p-3 text-sm leading-0"
             type="text"
             placeholder="請輸入電子郵件"
           />
-          <input
+          <Input
             className="border-grey mb-3 w-full rounded border p-3 text-sm leading-0"
-            type="password"
+            type="text"
             placeholder="請輸入密碼"
           />
           <button

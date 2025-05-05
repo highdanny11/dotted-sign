@@ -3,6 +3,7 @@ import Facebook from '@/assets/Facebook.svg';
 import Logo from '@/assets/Logo.svg';
 import LoginImg from '@/assets/LoginImg.svg';
 import { Link } from 'react-router';
+import { Input } from '@/component/form/Input';
 
 export function Login() {
   const facebookLogin = () => {
@@ -32,15 +33,15 @@ export function Login() {
           </li>
         </ul>
         <form className="border-grey border-t pt-6 text-center">
-          <input
+          <Input
             className="border-grey mb-3 w-full rounded border p-3 text-sm leading-0"
             type="text"
-            placeholder="請輸入電子郵件"
+            placeholder="請輸入電子郵件" 
           />
-          <input
+          <Input
             className="border-grey mb-3 w-full rounded border p-3 text-sm leading-0"
             type="password"
-            placeholder="請輸入密碼"
+            placeholder="請輸入密碼" 
           />
           <Link className="text-brand mb-6 inline-block text-sm" to="/">
             忘記密碼
