@@ -4,11 +4,34 @@ import Logo from '@/assets/Logo.svg';
 import LoginImg from '@/assets/LoginImg.svg';
 import { Link } from 'react-router';
 import { Input } from '@/component/form/Input';
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+
+const schema = z.object({
+  email: z.string().email({ message: "請輸入正確的電子郵件" }),
+  password: z.string().min(6, { message: "密碼至少6個字元" }).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/, {
+    message: "密碼至少包含一個大寫字母、一個小寫字母和一個數字",
+  }),
+})
+
+type LoginForm = z.infer<typeof schema>
+
 
 export function Login() {
   const facebookLogin = () => {
     window.open('http://localhost:8080/api/users/facebook', '_self');
   };
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      email: "",
+      password: "",
+    }
+  })
+  const onSubmit = (data: LoginForm) => {
+    console.log(data)
+  }
   return (
     <div className="items-center justify-between gap-4 md:flex">
       <div className="flex-grow md:pt-10 lg:max-w-[416px]">
@@ -32,23 +55,27 @@ export function Login() {
             </button>
           </li>
         </ul>
-        <form className="border-grey border-t pt-6 text-center">
+        <form className="border-grey border-t pt-6 text-center" onSubmit={handleSubmit(onSubmit)}>
           <Input
-            className="border-grey mb-3 w-full rounded border p-3 text-sm leading-0"
+            {...register("email")}
+            className={`border-grey w-full rounded border p-3 text-sm leading-0 ${errors.email ? 'border-[#D83A52]' : 'mb-3'}`}
             type="text"
-            placeholder="請輸入電子郵件" 
+            placeholder="請輸入電子郵件"
           />
+          {errors.email && <p className="text-[#D83A52] text-left  mb-3">{errors.email.message}</p>}
           <Input
-            className="border-grey mb-3 w-full rounded border p-3 text-sm leading-0"
+            {...register("password")}
+            className={`border-grey w-full rounded border p-3 text-sm leading-0 ${errors.password ? 'border-[#D83A52]' : 'mb-3'}`}
             type="password"
-            placeholder="請輸入密碼" 
+            placeholder="請輸入密碼"
           />
+          {errors.password && <p className="text-[#D83A52] text-left  mb-3">{errors.password.message}</p>}
           <Link className="text-brand mb-6 inline-block text-sm" to="/">
             忘記密碼
           </Link>
           <button
             className="bg-brand mb-4 flex min-h-[38px] w-full items-center justify-center rounded text-white"
-            type="button">
+            type="submit">
             登入
           </button>
           <p className="text-center text-sm">
