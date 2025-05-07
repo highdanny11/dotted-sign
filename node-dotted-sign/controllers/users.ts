@@ -1,38 +1,56 @@
-import { catchAsync } from '../utils/catchAsync'
-import { createUser, getUserInfo } from '../services/users'
+import { catchAsync } from "../utils/catchAsync";
+import { createUser, getUserInfo, getUserloginInfo } from "../services/users";
 import status from "http-status";
-import { generateJWT } from '../utils/generateJWT'
-import { verifyJWT } from '../utils/verifyJWT'
+import { generateJWT } from "../utils/generateJWT";
+import { verifyJWT } from "../utils/verifyJWT";
 
 export const regsiter = catchAsync(async (req, res, next) => {
-  const form = req.body
-  const saver = await createUser(form)
-  const token = await generateJWT({ id: saver.id }, process.env.JWT_SECRET!, { expiresIn: `${process.env.JWT_EXPIRES_DAY!}` })
+  const form = req.body;
+  const saver = await createUser(form);
+  const token = await generateJWT({ id: saver.id }, process.env.JWT_SECRET!, {
+    expiresIn: `${process.env.JWT_EXPIRES_DAY!}`,
+  });
   res.status(status.CREATED).json({
-    status: 'success',
+    status: "success",
     data: {
       user: {
-        token
-      }
-    }
-  })
-})
+        token,
+      },
+    },
+  });
+});
+
+export const login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+  const exist = await getUserloginInfo(email, password);
+  const token = await generateJWT({ id: exist.id }, process.env.JWT_SECRET!, {
+    expiresIn: `${process.env.JWT_EXPIRES_DAY!}`,
+  });
+  res.status(status.CREATED).json({
+    status: "success",
+    data: {
+      user: {
+        token,
+      },
+    },
+  });
+});
 
 export const info = catchAsync(async (req, res, next) => {
-  console.log(req.headers.authorization)
-  //  這段註解是處理 token 後面要放到 middleware
-  // if (!req.headers ||
-  //   !req.headers.authorization ||
-  //   !req.headers.authorization.startsWith('Bearer')) {
-
-  // }
-  // const [, token] = req.headers.authorization!.split(' ')
-  // const data = await verifyJWT(token, process.env.JWT_SECRET!)
-  const user = await getUserInfo(req.body.id)
+  const user = await getUserInfo(req.body.id);
+  const files = user.files.map((item: typeof user.files) => ({
+    id: item.id,
+    name: item.name,
+    createdAt: item.created_at,
+  }));
   res.status(status.CREATED).json({
-    status: 'success',
+    status: "success",
     data: {
-      user: user
-    }
-  })
-})
+      user: {
+        name: user.name,
+        email: user.email,
+        files: files,
+      },
+    },
+  });
+});

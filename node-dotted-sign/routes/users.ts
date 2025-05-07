@@ -1,8 +1,9 @@
 import express from "express";
-import { registerMiddlerware } from "../middlewares/users";
+import { registerMiddlerware, loginMiddlerware } from "../middlewares/users";
+import { authMiddlerware } from "../middlewares/auth";
 
 const router = express.Router();
-import { regsiter, info } from "../controllers/users";
+import { regsiter, info, login } from "../controllers/users";
 const passport = require("passport");
 const GooleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
@@ -94,6 +95,7 @@ router.get(
   }
 );
 router.post("/signup", registerMiddlerware, regsiter);
-router.post("/info", info);
+router.post("/login", loginMiddlerware, login);
+router.get("/info", authMiddlerware, info);
 
 export default router;
