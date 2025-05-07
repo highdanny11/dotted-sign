@@ -7,9 +7,13 @@ import { useDrag } from '@/hook/useDrag';
 import { useNavigate } from 'react-router';
 import { useLayoutStore } from '@/store/useLayout';
 import { useSignStore } from '@/store/useSign';
+import { useUserStore } from '@/store/useUser';
+import { getUserInfo } from '@/api/users';
 
 export function HomePage() {
   const setHeader = useLayoutStore((state) => state.setHeader);
+  const setToken = useUserStore((state) => state.setToken);
+  const setUser = useUserStore((state) => state.setUser);
   const setFile = useSignStore((state) => state.setFile);
   const setFileName = useSignStore((state) => state.setFileName);
   const navigate = useNavigate();
@@ -39,6 +43,22 @@ export function HomePage() {
       finishFile(file);
     }
   };
+
+  useEffect(() => {
+    const updateUserInfo = async () => {
+      if (sessionStorage.getItem('token')) {
+        setToken(sessionStorage.getItem('token')!);
+        try {
+          const res = await getUserInfo();
+          setUser(res.data.user);
+        } catch (error) {
+          setToken('');
+          console.error('Error fetching user info:', error);
+        }
+      }
+    };
+    updateUserInfo();
+  }, [sessionStorage.getItem('token')]);
 
   return (
     <div className="container">

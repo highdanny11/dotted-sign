@@ -2,15 +2,20 @@ import Logo from '@/assets/Logo.svg';
 import { MdOutlineArrowBack, MdOutlineCreate } from 'react-icons/md';
 import { useLayoutStore } from '@/store/useLayout';
 import { useSignStore } from '@/store/useSign';
+import { useUserStore } from '@/store/useUser';
 import { useNavigate, useLocation } from 'react-router';
 import { Modal } from 'antd';
 import { Input } from '../form/Input';
 import { Button } from '@/component/form/Button';
+import Large from '@/assets/Large.svg';
+import { Popconfirm } from 'antd';
 
 export function HomeHeader() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const hearder = useLayoutStore((state) => state.hearder);
   const fileName = useSignStore((state) => state.fileName);
+  const token = useUserStore((state) => state.token);
+  const setToken = useUserStore((state) => state.setToken);
   const setFileName = useSignStore((state) => state.setFileName);
   const [acitveFileName, setActiveFileName] = useState(fileName);
   const navigate = useNavigate();
@@ -23,6 +28,17 @@ export function HomeHeader() {
   };
   const register = () => {
     navigate('/register');
+  };
+  const confirmLogout = () => {
+    setToken('');
+    useUserStore.setState({
+      user: {
+        email: '',
+        name: '',
+        file: [],
+      },
+    });
+    navigate('/');
   };
 
   useEffect(() => {
@@ -53,18 +69,30 @@ export function HomeHeader() {
             </div>
           )}
           <div className="flex gap-2">
-            <button
-              className="border-brand text-brand flex min-h-[38px] w-[86px] cursor-pointer items-center justify-center rounded border"
-              onClick={login}
-              type="button">
-              登入
-            </button>
-            <button
-              className="bg-brand flex min-h-[38px] w-[86px] cursor-pointer items-center justify-center rounded text-white"
-              onClick={register}
-              type="button">
-              註冊
-            </button>
+            {token ? (
+              <Popconfirm
+                title="確定要登出嗎？"
+                onConfirm={confirmLogout}
+                okText="Yes"
+                cancelText="No">
+                <img src={Large} alt="admin" />
+              </Popconfirm>
+            ) : (
+              <>
+                <button
+                  className="border-brand text-brand flex min-h-[38px] w-[86px] cursor-pointer items-center justify-center rounded border"
+                  onClick={login}
+                  type="button">
+                  登入
+                </button>
+                <button
+                  className="bg-brand flex min-h-[38px] w-[86px] cursor-pointer items-center justify-center rounded text-white"
+                  onClick={register}
+                  type="button">
+                  註冊
+                </button>
+              </>
+            )}
           </div>
         </div>
       </header>
