@@ -135,7 +135,7 @@ export function SignaturePad({
     storkesRef.current = [];
   };
 
-  const changeColor = (color: string, e: React.MouseEvent) => {
+  const changeColor = (color: string, _e: React.MouseEvent) => {
     const canvas = canvasRef.current;
     const ctx = ctxRef.current;
     if (!canvas || !ctx) return;
@@ -148,7 +148,7 @@ export function SignaturePad({
     reDraw();
     updateSign();
   };
-  const undo = (e: React.MouseEvent) => {
+  const undo = (_e: React.MouseEvent) => {
     if (storkesRef.current.length > 0) {
       storkesRef.current.pop();
       const canvas = canvasRef.current;

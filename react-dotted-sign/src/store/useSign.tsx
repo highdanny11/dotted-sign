@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Canvas, Textbox, Image } from 'fabric/fabric-impl';
+import { Textbox, Image } from 'fabric/fabric-impl';
 import { fabric } from 'fabric';
 
 type SignState = {
@@ -34,11 +34,12 @@ export const useSignStore = create<SignState & SignActions>((set) => ({
   setFileName: (fileName: string) => set(() => ({ fileName: fileName })), // 設定檔案名稱
   setCurrentPage: (currentPage: number) => set(() => ({ currentPage })),
   setTotalPage: (totalPage: number) => set(() => ({ totalPage })), // 設定總頁數
-  setCanvasList: (canvas: fabric.Canvas, index:number) => set((state) => {
-    const newCanvasList = [...state.canvasList]
-    newCanvasList[index] = canvas // 更新指定索引的 canvas
-    return { canvasList: newCanvasList }
-  }), // 設定 canvasList
+  setCanvasList: (canvas: fabric.Canvas, index: number) =>
+    set((state) => {
+      const newCanvasList = [...state.canvasList];
+      newCanvasList[index] = canvas; // 更新指定索引的 canvas
+      return { canvasList: newCanvasList };
+    }), // 設定 canvasList
   setSignature: (signature: Sign[][]) => set(() => ({ signature })), // 設定 signature
   addSignature: (pageIndex: number, signature: Sign) =>
     set((state) => {
@@ -49,7 +50,7 @@ export const useSignStore = create<SignState & SignActions>((set) => ({
       newSignature[pageIndex].push(signature); // 將簽名加入該頁的簽名陣列
       return { signature: newSignature };
     }),
-  resetSignState: () => 
+  resetSignState: () =>
     set(() => ({
       file: null,
       fileName: '',
@@ -57,5 +58,5 @@ export const useSignStore = create<SignState & SignActions>((set) => ({
       totalPage: 0,
       canvasList: [],
       signature: [], // 重置 signature 為空陣列
-    }))
+    })),
 }));

@@ -5,13 +5,12 @@ import { InputSign } from './InputSign';
 import { SignaturePad } from './SignaturePad';
 import { UploadFile } from './UploadFile';
 import { useSignStore } from '@/store/useSign';
-import { MdDragIndicator } from 'react-icons/md';
 import { fabric } from 'fabric';
-import { setFabricDeleteControl } from '@/utils/setFabricDeleteControl'
+import { setFabricDeleteControl } from '@/utils/setFabricDeleteControl';
 
 type TabKey = 'InputSign' | 'SignaturePad' | 'UploadFile';
 
-export function SignSettingSection({currentPage}: {currentPage: number}) {
+export function SignSettingSection({ currentPage }: { currentPage: number }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [signOptions, setSignOptions] = useState({
     fontfamily: 'Noto Sans TC',
@@ -48,7 +47,7 @@ export function SignSettingSection({currentPage}: {currentPage: number}) {
         height: img.height,
       });
 
-      data.controls.deleteControl = setFabricDeleteControl()
+      data.controls.deleteControl = setFabricDeleteControl();
       canvasList[currentPage].add(data);
     };
   };
@@ -60,7 +59,7 @@ export function SignSettingSection({currentPage}: {currentPage: number}) {
       fill: signOptions.color,
       fontFamily: signOptions.fontfamily,
     });
-    text.controls.deleteControl = setFabricDeleteControl()
+    text.controls.deleteControl = setFabricDeleteControl();
     canvasList[currentPage].add(text);
   };
 
@@ -96,7 +95,7 @@ export function SignSettingSection({currentPage}: {currentPage: number}) {
       <Button
         theme="primary-outline"
         size="lg"
-        className="w-full mb-2"
+        className="mb-2 w-full"
         onClick={() => setIsModalOpen(true)}>
         加入簽名
       </Button>
@@ -169,7 +168,7 @@ export function SignSettingSection({currentPage}: {currentPage: number}) {
             size="lg"
             theme="primary"
             disabled={!currentSign}
-            className='mx-auto flex items-center justify-center'>
+            className="mx-auto flex items-center justify-center">
             儲存
           </Button>
         </div>
