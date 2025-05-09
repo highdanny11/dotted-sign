@@ -1,5 +1,6 @@
 volumes:
   pgData:
+  react_dist:
 networks:
   bootcamp_network:
 services:
@@ -45,14 +46,18 @@ services:
         condition: service_healthy
   frontend:
     image: highdanny11/react-dotted-sign:latest
+    build: ./react-dotted-sign
+    volumes:
+      - react_dist:/app/dist
     networks:
       - bootcamp_network
     depends_on:
       - backend
+    command: sh -c "echo Build completed"
   nginx:
     image: nginx:alpine
     volumes:
-      - ./react-dotted-sign/dist:/usr/share/nginx/html
+      - react_dist:/usr/share/nginx/html
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
       - "80:80"

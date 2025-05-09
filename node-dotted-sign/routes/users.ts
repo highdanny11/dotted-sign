@@ -20,8 +20,6 @@ passport.use(
       profile: { id: string; displayName: string; email: string[] },
       cb: (err: any, user: any) => void
     ) {
-      console.log("測試");
-      console.log(profile);
       try {
         cb(null, profile);
       } catch (error) {
@@ -45,8 +43,6 @@ passport.use(
       profile: { id: string; displayName: string; email: string[] },
       cb: (err: any, user: any) => void
     ) {
-      console.log("測試");
-      console.log(profile);
       try {
         cb(null, profile);
       } catch (error) {
@@ -91,7 +87,7 @@ router.get(
     session: false,
   }),
   (req, res) => {
-    res.redirect("http://localhost:5173/#");
+    res.redirect("https://sign.sideproject.website/");
   }
 );
 router.post("/signup", registerMiddlerware, regsiter);
