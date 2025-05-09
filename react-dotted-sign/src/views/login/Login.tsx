@@ -37,7 +37,10 @@ export function Login() {
     },
   });
   const facebookLogin = () => {
-    window.open('http://localhost:8080/api/users/facebook', '_self');
+    window.open('https://sign.sideproject.website/api/users/facebook', '_self');
+  };
+  const googleLogin = () => {
+    window.open('https://sign.sideproject.website/api/users/google', '_self');
   };
   const onSubmit = async (data: LoginForm) => {
     try {
@@ -60,6 +63,7 @@ export function Login() {
             <button
               type="button"
               disabled={loading}
+              onClick={googleLogin}
               className="text-sx flex min-h-[48px] w-full items-center justify-center gap-2 rounded border border-[#1877F2]">
               <img src={Google} alt="GoogleIcon" />
               透過 Google 登入

@@ -64,7 +64,6 @@ router.get(
     session: false,
   }),
   function (req: any, res: any) {
-    console.log(req.user);
     res.status(200).json({
       status: "success",
       data: {
