@@ -5,6 +5,11 @@ import './index.css';
 if (window.location.href.indexOf('#') > 0) {
   window.open(location.origin, '_self');
 }
+if (window.location.search.indexOf('token') > 0) {
+  const searchParams = new URLSearchParams(window.location.search);
+  sessionStorage.setItem('token', searchParams.get('token')!);
+  window.open(location.origin, '_self');
+}
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>

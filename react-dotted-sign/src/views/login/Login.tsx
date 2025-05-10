@@ -1,5 +1,4 @@
 import Google from '@/assets/Google.svg';
-import Facebook from '@/assets/Facebook.svg';
 import Logo from '@/assets/Logo.svg';
 import LoginImg from '@/assets/LoginImg.svg';
 import { Link } from 'react-router';
@@ -36,9 +35,6 @@ export function Login() {
       password: '',
     },
   });
-  const facebookLogin = () => {
-    window.open('https://sign.sideproject.website/api/users/facebook', '_self');
-  };
   const googleLogin = () => {
     window.open('https://sign.sideproject.website/api/users/google', '_self');
   };
@@ -59,7 +55,7 @@ export function Login() {
       <div className="flex-grow md:pt-10 lg:max-w-[416px]">
         <img className="mx-auto mb-8" src={Logo} alt="logo" />
         <ul className="mb-6 flex items-center gap-4">
-          <li className="w-1/2">
+          <li className="w-full">
             <button
               type="button"
               disabled={loading}
@@ -67,16 +63,6 @@ export function Login() {
               className="text-sx flex min-h-[48px] w-full items-center justify-center gap-2 rounded border border-[#1877F2]">
               <img src={Google} alt="GoogleIcon" />
               透過 Google 登入
-            </button>
-          </li>
-          <li className="w-1/2">
-            <button
-              type="button"
-              disabled={loading}
-              onClick={facebookLogin}
-              className="text-sx flex min-h-[48px] w-full items-center justify-center gap-2 rounded border border-[#1877F2]">
-              <img src={Facebook} alt="FacebookIcon" />
-              透過 facebook 登入
             </button>
           </li>
         </ul>

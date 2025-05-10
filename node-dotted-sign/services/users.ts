@@ -62,3 +62,25 @@ export const getUserInfo = async (id: string) => {
   if (!user) throw new ApiError(status.BAD_REQUEST, "使用者不存在");
   return user;
 };
+
+export const findOrCreateUser = async (form: {
+  name: string;
+  email: string;
+}) => {
+  const { name, email } = form;
+  const userRepository = dataSource.getRepository("Users");
+  const exist = await userRepository.findOne({ where: { email: email } });
+  if (exist) return exist;
+  const defaultPassword = "googleLogin";
+  const salt = await bcrypt.genSalt(10);
+  const hashPassword = await bcrypt.hash(defaultPassword, salt);
+  const newUser = new Users();
+  newUser.name = name;
+  newUser.email = email;
+  newUser.password = hashPassword;
+  const files = new Files();
+  files.name = "共用資料夾";
+  newUser.files = [files];
+  const savedUser = await userRepository.save(newUser);
+  return savedUser;
+};

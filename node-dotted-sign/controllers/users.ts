@@ -2,7 +2,6 @@ import { catchAsync } from "../utils/catchAsync";
 import { createUser, getUserInfo, getUserloginInfo } from "../services/users";
 import status from "http-status";
 import { generateJWT } from "../utils/generateJWT";
-import { verifyJWT } from "../utils/verifyJWT";
 
 export const regsiter = catchAsync(async (req, res, next) => {
   const form = req.body;
