@@ -8,7 +8,9 @@ if (window.location.href.indexOf('#') > 0) {
 if (window.location.search.indexOf('token') > 0) {
   const searchParams = new URLSearchParams(window.location.search);
   sessionStorage.setItem('token', searchParams.get('token')!);
-  window.open(location.origin, '_self');
+  setTimeout(() => {
+    window.location.replace(location.origin);
+  }, 300);
 }
 
 createRoot(document.getElementById('root')!).render(
