@@ -27,6 +27,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: ./node-dotted-sign # 設定建置上下文為當前目錄
+          file: ./node-dotted-sign/Dockerfile # 指定 Dockerfile 的路徑
           push: true # 在建置完成後推送映像到 Docker Hub
           platforms: linux/amd64,linux/arm64 # 目標平台為 AMD64 和 ARM64
           tags: | # 設定 Docker 映像的標籤
@@ -35,6 +36,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: ./react-dotted-sign # 設定建置上下文為當前目錄
+          file: "./react-dotted-sign/Dockerfile" # 指定 Dockerfile 的路徑
           push: true # 在建置完成後推送映像到 Docker Hub
           platforms: linux/amd64,linux/arm64 # 目標平台為 AMD64 和 ARM64
           tags: | # 設定 Docker 映像的標籤
