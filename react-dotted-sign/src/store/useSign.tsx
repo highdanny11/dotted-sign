@@ -9,9 +9,11 @@ type SignState = {
   totalPage: number;
   canvasList: fabric.Canvas[];
   signature: Sign[][]; // 新增 signature 屬性
+  activeStep: number;
 };
 type SignActions = {
   setFile: (file: File) => void;
+  setActiveStep: (activeStep: number) => void;
   setFileName: (fileName: string) => void;
   setCurrentPage: (currentPage: number) => void;
   setTotalPage: (totalPage: number) => void;
@@ -30,6 +32,7 @@ export const useSignStore = create<SignState & SignActions>((set) => ({
   totalPage: 0,
   canvasList: [],
   signature: [], // 初始化 signature 為空陣列
+  activeStep: 0,
   setFile: (file: File) => set(() => ({ file: file })),
   setFileName: (fileName: string) => set(() => ({ fileName: fileName })), // 設定檔案名稱
   setCurrentPage: (currentPage: number) => set(() => ({ currentPage })),
@@ -59,4 +62,5 @@ export const useSignStore = create<SignState & SignActions>((set) => ({
       canvasList: [],
       signature: [], // 重置 signature 為空陣列
     })),
+  setActiveStep: (activeStep: number) => set(() => ({ activeStep })), // 設定當前步驟
 }));

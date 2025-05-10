@@ -1,5 +1,6 @@
 import Finish from '@/assets/Finish.svg';
 import { useState } from 'react';
+import { useSignStore } from '@/store/useSign';
 
 type StepState = 'active' | 'finish' | 'default';
 
@@ -85,21 +86,34 @@ export function Step() {
       ...lastStateStyle['default'],
     },
   ]);
+  const activeStep = useSignStore((state) => state.activeStep);
 
-  const newSteps = steps.map((item, index) => {
-    const newStyle =
-      index === steps.length - 1
-        ? lastStateStyle['active']
-        : stateStyle['active'];
-    return {
-      ...item,
-      state: 'active' as StepState,
-      ...newStyle,
+  useEffect(() => {
+    const init = () => {
+      const newSteps = steps.map((item, index) => {
+        const data = { ...item };
+        if (index < activeStep) {
+          data.state = 'finish';
+          data.liStyle = stateStyle['finish'].liStyle;
+          data.divStyle = stateStyle['finish'].divStyle;
+          data.spanStyle = stateStyle['finish'].spanStyle;
+        } else if (index === activeStep) {
+          data.state = 'active';
+          data.liStyle = stateStyle['active'].liStyle;
+          data.divStyle = stateStyle['active'].divStyle;
+          data.spanStyle = stateStyle['active'].spanStyle;
+        } else {
+          data.state = 'default';
+          data.liStyle = stateStyle['default'].liStyle;
+          data.divStyle = stateStyle['default'].divStyle;
+          data.spanStyle = stateStyle['default'].spanStyle;
+        }
+        return data;
+      });
+      setSteps(newSteps);
     };
-  });
-  setTimeout(() => {
-    setSteps(newSteps);
-  }, 2000);
+    init();
+  }, [activeStep]);
 
   return (
     <ul className="container flex items-center gap-2 py-2 md:justify-center md:gap-4">

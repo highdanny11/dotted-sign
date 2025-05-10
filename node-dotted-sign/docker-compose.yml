@@ -39,5 +39,8 @@ services:
         compress: "true"
     deploy:
       replicas: 1
+    depends_on:
+      postgres:
+        condition: service_healthy
 networks:
   bootcamp_network:

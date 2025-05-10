@@ -1,14 +1,14 @@
 import { Step } from '@/component/step';
 import { Button } from '@/component/form/Button';
+import Cycle from '@/assets/Cycle.png';
 import { SignSettingSection } from './SignSettingSection';
 import { useSignStore } from '@/store/useSign';
 import { fileToBase64 } from '@/utils/fileToBase64';
 import { PDFUtils } from '@/utils/PDFUtils';
 import { Image } from 'antd';
 import { useNavigate } from 'react-router';
-import { Spin } from "antd";
-// https://github.com/ChangChiao/f2e-2022-sign/blob/main/src/components/PDFItem.tsx
-// https://eminent-temple-cd0.notion.site/PDF-da0347f450af4f67975e2c2d699c6c3e
+import { Spin, Modal } from 'antd';
+
 import {
   MdArrowBackIosNew,
   MdArrowForwardIos,
@@ -23,11 +23,14 @@ export function Sign() {
   const file = useSignStore((state) => state.file);
   const canvasList = useSignStore((state) => state.canvasList);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [checkModal, setCheckModal] = useState(false);
+  const [checkFile, setCheckFile] = useState(false);
   const [cavasPdf, setCavasPdf] = useState<HTMLCanvasElement[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [currentImage, setCurrentImage] = useState<string>('');
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+  const setActiveStep = useSignStore((state) => state.setActiveStep);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,9 +39,9 @@ export function Sign() {
         const base64String = await fileToBase64(file);
         const canvas = await PDFUtils(base64String);
         setCavasPdf(canvas);
-      }catch(e) {
+      } catch (e) {
         console.log('Error converting file to base64:', e);
-      }finally {
+      } finally {
         setLoading(false);
       }
     };
@@ -55,32 +58,40 @@ export function Sign() {
   };
 
   const finishSignPDF = () => {
-    navigate('/finish-file')
+    navigate('/finish-file');
   };
+  useEffect(() => {
+    if (checkModal) {
+      setActiveStep(2);
+    } else {
+      setActiveStep(1);
+    }
+  }, [checkModal]);
 
   return (
     <>
       <Step />
       <div className="border-grey overflow-hidden border-t">
         <div className="relative lg:container lg:flex">
-          <main className="bg-ui-grey lg:flex-grow-1 ">
-            <div className='h-[calc(100vh-240px)] lg:h-[calc(100vh-135px)] overflow-auto relative p-6 xl:px-12'>
-              {!loading && cavasPdf.map((canvas, index) => (
-                <PDFBox
-                  key={index}
-                  pdfCanvas={canvas}
-                  index={index}
-                  currentPage={currentPage}
-                />
-              ))}
+          <main className="bg-ui-grey lg:flex-grow-1">
+            <div className="relative h-[calc(100vh-240px)] overflow-auto p-6 lg:h-[calc(100vh-135px)] xl:px-12">
+              {!loading &&
+                cavasPdf.map((canvas, index) => (
+                  <PDFBox
+                    key={index}
+                    pdfCanvas={canvas}
+                    index={index}
+                    currentPage={currentPage}
+                  />
+                ))}
               {loading && (
-                <div className="bg-grey h-[1000px] flex items-center justify-center">
+                <div className="bg-grey flex h-[1000px] items-center justify-center">
                   <Spin size="large" />
                 </div>
               )}
             </div>
             {/* 功能列 */}
-            <div className="absolute bottom-[120px] left-12 lg:bottom-10 lg:left-[9%] z-20">
+            <div className="absolute bottom-[120px] left-12 z-20 lg:bottom-10 lg:left-[9%]">
               <ul className="flex items-center gap-2">
                 <li>
                   <button
@@ -138,7 +149,7 @@ export function Sign() {
             </div>
             <Button
               type="button"
-              onClick={finishSignPDF}
+              onClick={() => setCheckModal(true)}
               className="w-full"
               theme="primary-outline"
               size="lg">
@@ -173,6 +184,58 @@ export function Sign() {
           )}
         </div>
       </div>
+      <Modal
+        title=""
+        open={checkModal}
+        footer={null}
+        closeIcon={false}
+        className="custom-modal"
+        onOk={() => setCheckModal(false)}
+        width={{
+          xs: '90%',
+          sm: '80%',
+          md: '70%',
+          lg: '400px',
+          xl: '400px',
+          xxl: '400px',
+        }}
+        onCancel={() => setCheckModal(false)}>
+        <h2 className="text-brand py-3 text-center text-xl font-bold">
+          請確認您的檔案
+        </h2>
+        <h3 className="mb-8 text-center">確認後將無法修改。</h3>
+        <div className="flex items-center justify-between px-24 py-4">
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="checkRobot"
+              checked={checkFile}
+              onChange={() => setCheckFile(!checkFile)}
+            />
+            <label htmlFor="checkRobot" className="ml-2 block cursor-pointer">
+              我不是機器人
+            </label>
+          </div>
+          <img src={Cycle} width="80" alt="checkRobot" />
+        </div>
+        <Button
+          type="button"
+          size="lg"
+          theme="primary"
+          disabled={!checkFile}
+          onClick={finishSignPDF}
+          className="mx-auto mb-2 flex w-[226px] items-center justify-center">
+          確認
+        </Button>
+        <Button
+          type="button"
+          size="lg"
+          theme="primary-inline"
+          onClick={() => setCheckModal(false)}
+          className="mx-auto flex w-[226px] items-center justify-center">
+          返回
+        </Button>
+      </Modal>
     </>
   );
 }

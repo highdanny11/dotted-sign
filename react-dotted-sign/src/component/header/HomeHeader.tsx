@@ -44,6 +44,7 @@ export function HomeHeader() {
   useEffect(() => {
     if (location.pathname === '/') {
       useLayoutStore.setState({ hearder: 'HomeHeader' });
+      setActiveFileName('');
     }
   }, [location]);
   return (
