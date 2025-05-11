@@ -6,3 +6,4 @@ apidoc.json
 .git
 .cache
 pgdata
+.env

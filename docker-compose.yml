@@ -29,6 +29,8 @@ services:
     build: ./node-dotted-sign
     env_file:
       - .env
+    volumes:
+      - ./.env:/app/.env
     ports:
       - "${PORT}:${PORT}"
     networks:
