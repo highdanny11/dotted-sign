@@ -96,13 +96,6 @@ export function Sign() {
                 <li>
                   <button
                     type="button"
-                    className="border-grey rounded border bg-white p-1">
-                    <MdDeleteOutline className="text-dark-grey text-xl" />
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
                     onClick={openImage}
                     className="border-grey rounded border bg-white p-1">
                     <MdHighlightAlt className="text-dark-grey text-xl" />
@@ -133,7 +126,7 @@ export function Sign() {
               </ul>
             </div>
             {!isModalOpen && (
-              <div className="absolute top-5 right-5 lg:hidden">
+              <div className="absolute top-5 right-5 lg:hidden z-20">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(true)}
@@ -157,7 +150,7 @@ export function Sign() {
             </Button>
           </div>
           <div
-            className={`fixed top-[144px] right-0 h-[calc(100vh-240px)] w-[calc(100vw-32px)] bg-white shadow-[0px_0px_12px_0px_rgba(0,0,0,0.36)] duration-400 ease-in-out md:w-2/3 ${isModalOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            className={`fixed top-[135px] z-20 right-0 h-[calc(100vh-240px)] w-[calc(100vw-32px)] bg-white shadow-[0px_0px_12px_0px_rgba(0,0,0,0.36)] duration-400 ease-in-out md:w-2/3 ${isModalOpen ? 'translate-x-0' : 'translate-x-full'}`}>
             <div className="p-6">
               <button
                 type="button"

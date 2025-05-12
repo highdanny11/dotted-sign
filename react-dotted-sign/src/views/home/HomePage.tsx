@@ -100,7 +100,7 @@ export function HomePage() {
             </span>
             <h4 className="h4 mb-1 font-bold">上傳檔案</h4>
             <p className="mb-1 inline-block text-sm leading-[1.58]">
-              選擇PDF檔或是IMG檔
+              選擇PDF檔
             </p>
             <img src={Step1} className="mx-auto" alt="Step1" />
           </li>
