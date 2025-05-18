@@ -12,7 +12,6 @@ import { Spin, Modal } from 'antd';
 import {
   MdArrowBackIosNew,
   MdArrowForwardIos,
-  MdDeleteOutline,
   MdHighlightAlt,
   MdMenuOpen,
   MdClose,
