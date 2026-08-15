@@ -112,6 +112,7 @@ export function SignSettingSection({ currentPage }: { currentPage: number }) {
         open={isModalOpen}
         footer={null}
         className="custom-modal"
+        forceRender
         onOk={() => setIsModalOpen(false)}
         width={{
           xs: '90%',

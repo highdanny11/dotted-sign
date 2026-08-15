@@ -74,7 +74,7 @@ export function Sign() {
       <div className="border-grey overflow-hidden border-t">
         <div className="relative lg:container lg:flex">
           <main className="bg-ui-grey lg:flex-grow-1">
-            <div className="relative h-[calc(100vh-240px)] overflow-auto p-6 lg:h-[calc(100vh-135px)] xl:px-12">
+            <div className="relative h-[calc(100vh-240px)] overflow-auto p-6 lg:h-[calc(100vh-135px)] xl:px-12 [contain:layout_paint]">
               {!loading &&
                 cavasPdf.map((canvas, index) => (
                   <PDFBox
