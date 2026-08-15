@@ -193,7 +193,7 @@ export function SignaturePad({
             onTouchMove={(e) => mouseMove(e)}
             onTouchEnd={() => mouseup()}
             ref={canvasRef}
-            className="h-[156px] w-full"></canvas>
+            className="h-[156px] w-full touch-none"></canvas>
           <div className="absolute right-2 bottom-2 flex items-center gap-2">
             <button
               type="button"

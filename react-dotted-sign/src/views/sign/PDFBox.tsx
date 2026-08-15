@@ -47,7 +47,7 @@ export function PDFBox({ pdfCanvas, index, currentPage }: PDFBoxProps) {
       
     }
     renderPDF();
-  }, [pdfCanvas, currentPage]);
+  }, [pdfCanvas]);
 
   return (
     <>

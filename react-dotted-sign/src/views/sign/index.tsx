@@ -51,8 +51,9 @@ export function Sign() {
   }, [file]);
 
   const openImage = async () => {
-    const base64 = canvasList[currentPage].toDataURL();
-    setCurrentImage(base64);
+    const canvas = canvasList[currentPage];
+    if (!canvas) return;
+    setCurrentImage(canvas.toDataURL());
     setVisible(true);
   };
 
@@ -104,9 +105,7 @@ export function Sign() {
                   <button
                     type="button"
                     onClick={() =>
-                      setCurrentPage((prev) =>
-                        prev < cavasPdf.length - 1 ? prev + 1 : prev - 1
-                      )
+                      setCurrentPage((prev) => Math.max(0, prev - 1))
                     }
                     className="border-grey rounded border bg-white p-1">
                     <MdArrowBackIosNew className="text-dark-grey text-xl" />
@@ -116,7 +115,9 @@ export function Sign() {
                   <button
                     type="button"
                     onClick={() =>
-                      setCurrentPage((prev) => (prev > 0 ? prev - 1 : prev + 1))
+                      setCurrentPage((prev) =>
+                        Math.min(cavasPdf.length - 1, prev + 1)
+                      )
                     }
                     className="border-grey rounded border bg-white p-1">
                     <MdArrowForwardIos className="text-dark-grey text-xl" />
